@@ -2,8 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional: Make the background dark immediately */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: #0f0f11; 
+  background-color: #0f0f11;
+  color: white;
+}
+
+/* Custom Selection Color matching your Brand */
+::selection {
+  background-color: rgba(139, 47, 201, 0.3);
   color: white;
 }
