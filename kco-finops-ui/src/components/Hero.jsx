@@ -1,10 +1,10 @@
+// src/components/Hero.jsx
 import React, { useState, useEffect } from "react";
 import { 
   ArrowRight, 
   Terminal, 
   BarChart2, 
   Sparkles, 
-  TrendingUp, 
   Clock, 
   Calendar, 
   Zap,
@@ -15,7 +15,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const Hero = () => {
+// 1. ACCEPT THE PROP HERE
+const Hero = ({ onOpenAuth }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [counter, setCounter] = useState(0);
 
@@ -26,7 +27,7 @@ const Hero = () => {
     setMousePosition({ x, y });
   };
 
-  // Animated Counter Effect (Savings Calculator)
+  // Animated Counter Effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCounter((prev) => (prev < 12500 ? prev + 150 : 12500));
@@ -38,10 +39,7 @@ const Hero = () => {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1, 
-      transition: { 
-        staggerChildren: 0.1, 
-        delayChildren: 0.2 
-      } 
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 } 
     },
   };
 
@@ -59,11 +57,9 @@ const Hero = () => {
       onMouseMove={handleMouseMove}
       className="relative min-h-screen flex items-center justify-center bg-[#0f0f11] overflow-hidden pt-24 pb-12"
     >
-      {/* --- BACKGROUND EFFECTS --- */}
-      {/* Grid */}
+      {/* Background Effects */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"></div>
 
-      {/* Animated Blobs */}
       <motion.div
         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
         transition={{ duration: 8, repeat: Infinity }}
@@ -77,14 +73,13 @@ const Hero = () => {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
         
-        {/* --- LEFT COLUMN: CONTENT --- */}
+        {/* LEFT COLUMN */}
         <motion.div 
           variants={containerVariants} 
           initial="hidden" 
           animate="visible" 
           className="text-left relative"
         >
-          {/* Top Badge */}
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 bg-[#2a2a30]/50 border border-white/10 rounded-full px-3 py-1 mb-6 backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5 text-[#a02ff1]" />
             <span className="text-[11px] font-bold tracking-widest text-[#d4a6f9] uppercase">
@@ -92,7 +87,6 @@ const Hero = () => {
             </span>
           </motion.div>
 
-          {/* Headlines */}
           <div className="mb-6">
             <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1] mb-2">
               CUT CLOUD <br /> COSTS
@@ -108,28 +102,25 @@ const Hero = () => {
             Master your unit economics. We align your infrastructure spend with business value to eliminate waste and forecast with precision.
           </motion.p>
 
-          {/* --- FEATURE TAGS --- */}
+          {/* Feature Tags */}
           <motion.div variants={itemVariants} className="flex flex-wrap gap-3 mb-10">
-            {/* Tag 1 */}
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1b26] border border-blue-500/30 text-blue-200 text-sm font-medium">
-              <Clock size={16} className="text-blue-400" />
-              <span>3-4 Wk Audit</span>
+              <Clock size={16} className="text-blue-400" /> <span>3-4 Wk Audit</span>
             </div>
-            {/* Tag 2 */}
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1b26] border border-[#a02ff1]/30 text-purple-200 text-sm font-medium">
-              <Calendar size={16} className="text-[#a02ff1]" />
-              <span>90 Day Plan</span>
+              <Calendar size={16} className="text-[#a02ff1]" /> <span>90 Day Plan</span>
             </div>
-            {/* Tag 3 */}
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1b26] border border-green-500/30 text-green-200 text-sm font-medium">
-              <Zap size={16} className="text-green-400" />
-              <span>Weekly Rhythm</span>
+              <Zap size={16} className="text-green-400" /> <span>Weekly Rhythm</span>
             </div>
           </motion.div>
 
           {/* Buttons */}
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4">
+            
+            {/* 2. ATTACH THE EVENT HANDLER HERE */}
             <motion.button
+              onClick={onOpenAuth} 
               whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(160, 47, 241, 0.5)" }}
               whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto relative px-8 py-4 rounded-xl font-bold text-white overflow-hidden bg-[#a02ff1] transition-all"
@@ -151,7 +142,7 @@ const Hero = () => {
           </motion.div>
         </motion.div>
 
-        {/* --- RIGHT COLUMN: 3D INTERACTIVE DASHBOARD --- */}
+        {/* RIGHT COLUMN (Dashboard) */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -177,10 +168,9 @@ const Hero = () => {
 
             {/* Dashboard Body */}
             <div className="p-6 flex flex-col gap-6 relative overflow-hidden">
-               {/* Grid Background inside Card */}
                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
 
-               {/* Metric Card 1: Unit Economics */}
+               {/* Metric Card 1 */}
                <div className="relative z-10 bg-[#1a1b20]/80 backdrop-blur-sm p-4 rounded-xl border border-white/5">
                  <div className="flex justify-between items-center mb-1">
                    <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
@@ -190,8 +180,6 @@ const Hero = () => {
                  </div>
                  <div className="text-3xl font-bold text-white mb-2">$0.0042</div>
                  <div className="text-xs text-gray-500">vs $0.0058 (Last Month)</div>
-                 
-                 {/* Mini bars */}
                  <div className="flex gap-1 mt-3 items-end h-8">
                     {[60, 55, 50, 48, 45, 42, 40, 38].map((h, i) => (
                       <div key={i} style={{height: `${h}%`}} className="flex-1 bg-blue-500/20 rounded-sm"></div>
@@ -199,7 +187,7 @@ const Hero = () => {
                  </div>
                </div>
 
-                {/* Floating "Waste Reduction" Badge */}
+                {/* Floating Badge */}
                 <motion.div 
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -212,7 +200,7 @@ const Hero = () => {
                   </div>
                 </motion.div>
 
-               {/* Metric Card 2: Projected Savings */}
+               {/* Metric Card 2 */}
                <div className="relative z-10 bg-[#1a1b20]/80 backdrop-blur-sm p-4 rounded-xl border border-white/5 mt-auto">
                  <div className="flex justify-between items-center mb-1">
                    <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
@@ -224,7 +212,6 @@ const Hero = () => {
                         <div className="text-3xl font-bold text-white">${counter.toLocaleString()}</div>
                         <div className="text-xs text-gray-500">Annualized Savings</div>
                     </div>
-                    {/* Purple Chart */}
                     <div className="flex gap-1 items-end h-10">
                         {[20, 35, 45, 50, 65, 75, 85, 100].map((h, i) => (
                         <motion.div 
@@ -239,7 +226,7 @@ const Hero = () => {
                  </div>
                </div>
 
-               {/* Floating Success Pill */}
+               {/* Success Pill */}
                <motion.div 
                  initial={{ opacity: 0, scale: 0.8 }}
                  animate={{ opacity: 1, scale: 1 }}
