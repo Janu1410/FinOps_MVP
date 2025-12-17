@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { 
   ArrowRight, 
   Terminal, 
-  BarChart2, 
   Sparkles, 
   Clock, 
   Calendar, 
@@ -14,8 +13,8 @@ import {
   DollarSign
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
-// 1. ACCEPT THE PROP HERE
 const Hero = ({ onOpenAuth }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [counter, setCounter] = useState(0);
@@ -118,27 +117,29 @@ const Hero = ({ onOpenAuth }) => {
           {/* Buttons */}
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4">
             
-            {/* 2. ATTACH THE EVENT HANDLER HERE */}
-            <motion.button
-              onClick={onOpenAuth} 
-              whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(160, 47, 241, 0.5)" }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto relative px-8 py-4 rounded-xl font-bold text-white overflow-hidden bg-[#a02ff1] transition-all"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <span>Start Free Audit</span>
-                <ArrowRight size={18} />
-              </div>
-            </motion.button>
+            <Link to="/sign-up" className="w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(160, 47, 241, 0.5)" }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full relative px-8 py-4 rounded-xl font-bold text-white overflow-hidden bg-[#a02ff1] transition-all"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span>Start Free Audit</span>
+                  <ArrowRight size={18} />
+                </div>
+              </motion.button>
+            </Link>
 
-            <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.05)" }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto px-6 py-4 border border-white/20 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2"
-            >
-              <Terminal size={18} className="text-gray-400" />
-              <span>How it Works</span>
-            </motion.button>
+            <a href="#about" className="w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.05)" }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full px-6 py-4 border border-white/20 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2"
+              >
+                <Terminal size={18} className="text-gray-400" />
+                <span>How it Works</span>
+              </motion.button>
+            </a>
           </motion.div>
         </motion.div>
 
@@ -170,7 +171,7 @@ const Hero = ({ onOpenAuth }) => {
             <div className="p-6 flex flex-col gap-6 relative overflow-hidden">
                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
 
-               {/* Metric Card 1 */}
+               {/* Metric Card 1 (Unit Cost - Blue) */}
                <div className="relative z-10 bg-[#1a1b20]/80 backdrop-blur-sm p-4 rounded-xl border border-white/5">
                  <div className="flex justify-between items-center mb-1">
                    <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
@@ -187,7 +188,7 @@ const Hero = ({ onOpenAuth }) => {
                  </div>
                </div>
 
-                {/* Floating Badge */}
+                {/* Floating Badge (Purple) */}
                 <motion.div 
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -200,18 +201,21 @@ const Hero = ({ onOpenAuth }) => {
                   </div>
                 </motion.div>
 
-               {/* Metric Card 2 */}
+               {/* Metric Card 2 (Waste Eliminated - UPDATED TO GREEN) */}
                <div className="relative z-10 bg-[#1a1b20]/80 backdrop-blur-sm p-4 rounded-xl border border-white/5 mt-auto">
                  <div className="flex justify-between items-center mb-1">
                    <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                     <DollarSign size={14} /> Waste Eliminated
+                     <DollarSign size={14} className="text-green-400" /> {/* Icon is now Green */}
+                     Waste Eliminated
                    </div>
                  </div>
                  <div className="flex items-end justify-between">
                     <div>
+                        {/* Text is now Green-tinted for emphasis */}
                         <div className="text-3xl font-bold text-white">${counter.toLocaleString()}</div>
                         <div className="text-xs text-gray-500">Annualized Savings</div>
                     </div>
+                    {/* Graph Bars are now GREEN */}
                     <div className="flex gap-1 items-end h-10">
                         {[20, 35, 45, 50, 65, 75, 85, 100].map((h, i) => (
                         <motion.div 
@@ -219,7 +223,7 @@ const Hero = ({ onOpenAuth }) => {
                             initial={{ height: 0 }}
                             animate={{ height: `${h}%` }}
                             transition={{ duration: 1, delay: i * 0.1 }}
-                            className="w-1.5 bg-[#a02ff1] rounded-t-sm" 
+                            className="w-1.5 bg-green-500 rounded-t-sm shadow-[0_0_10px_rgba(34,197,94,0.3)]" 
                         />
                         ))}
                     </div>
