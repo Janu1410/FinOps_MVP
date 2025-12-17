@@ -178,6 +178,7 @@ const Hero = () => {
             className="flex items-center gap-4"
           >
             <motion.button
+              onClick={() => window.open('/login', '_blank', 'noopener,noreferrer')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="group relative px-8 py-3.5 rounded-xl font-bold text-white overflow-hidden shadow-[0_0_20px_rgba(139,47,201,0.4)]"
