@@ -1,16 +1,16 @@
 // src/components/VerticalSidebar.jsx
 import React, { useRef, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { 
   BarChart3, TrendingUp, Gauge, Users, Boxes, 
   Sparkles, ShieldAlert, FileText, Upload as UploadIcon,
-  PlusCircle, Play
+  Play, FileBarChart
 } from 'lucide-react';
 
-const VerticalSidebar = ({ onCsvSelected, onProcessCsv, isProcessEnabled = false }) => {
-  const navigate = useNavigate();
+const VerticalSidebar = ({ onCsvSelected }) => {
   const fileInputRef = useRef(null);
   const [selectedFileName, setSelectedFileName] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // 1. Handle File Selection Logic
   const openFilePicker = () => {
@@ -21,7 +21,17 @@ const VerticalSidebar = ({ onCsvSelected, onProcessCsv, isProcessEnabled = false
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFileName(file.name);
+      setSelectedFile(file);
       if (onCsvSelected) onCsvSelected(file);
+    }
+  };
+
+  // Handle Process Upload - Frontend only (refresh dashboard)
+  const handleProcessUpload = () => {
+    if (selectedFile) {
+      // For now, just refresh the page (frontend only)
+      // In the future, this will call the backend
+      window.location.reload();
     }
   };
 
@@ -36,6 +46,7 @@ const VerticalSidebar = ({ onCsvSelected, onProcessCsv, isProcessEnabled = false
         { to: '/dashboard/cost-drivers', label: 'Cost Drivers', icon: Gauge },
         { to: '/dashboard/resources', label: 'Resources', icon: Boxes },
         { to: '/dashboard/data-quality', label: 'Data Quality', icon: ShieldAlert },
+        { to: '/dashboard/data-explorer', label: 'Data Explorer', icon: FileText },
       ]
     },
     {
@@ -49,7 +60,7 @@ const VerticalSidebar = ({ onCsvSelected, onProcessCsv, isProcessEnabled = false
     {
       title: 'REPORTING',
       items: [
-        { to: '/dashboard/reports', label: 'Reports', icon: FileText },
+        { to: '/dashboard/reports', label: 'Reports', icon: FileBarChart },
       ]
     }
   ];
@@ -77,9 +88,11 @@ const VerticalSidebar = ({ onCsvSelected, onProcessCsv, isProcessEnabled = false
       
       {/* --- LOGO SECTION --- */}
       <div className="px-5 py-6 mb-2 flex items-center gap-3">
-        <div className="relative w-7 h-7 rounded-lg bg-gradient-to-br from-[#a02ff1] to-[#7000ff] flex items-center justify-center shadow-lg shadow-purple-900/40">
-          <span className="font-bold text-white text-base">K</span>
-        </div>
+        <img 
+          src="/k&cologo.svg" 
+          alt="K&Co Logo" 
+          className="w-11 h-11 object-contain"
+        />
         <div>
           <h1 className="text-base font-bold text-white tracking-tight leading-none">K&Co.</h1>
           <p className="text-[10px] text-gray-500 font-mono mt-0.5">FINOPS OS v2.4</p>
@@ -123,42 +136,36 @@ const VerticalSidebar = ({ onCsvSelected, onProcessCsv, isProcessEnabled = false
           onClick={openFilePicker}
           className="group relative border border-dashed border-gray-700 hover:border-[#a02ff1] rounded-lg p-3 text-center cursor-pointer bg-[#1a1b20]/50 hover:bg-[#a02ff1]/5 transition-all"
         >
-          <div className="flex items-center justify-center gap-2 text-gray-400 group-hover:text-[#a02ff1] transition-colors mb-1">
-             <UploadIcon size={14} />
-             <span className="text-xs font-semibold text-white">
-                {selectedFileName ? 'Change File' : 'Upload Data'}
-             </span>
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center justify-center gap-2 text-gray-400 group-hover:text-[#a02ff1] transition-colors">
+               <UploadIcon size={14} />
+               <span className="text-xs font-semibold text-white">
+                  Upload more data (CSV)
+               </span>
+            </div>
+            <p className="text-[10px] text-gray-500/80">One-time upload</p>
           </div>
           {selectedFileName && (
-            <p className="text-[10px] text-gray-500 truncate px-1">{selectedFileName}</p>
+            <p className="text-[10px] text-gray-400 truncate px-1 mt-2 font-medium">{selectedFileName}</p>
           )}
         </div>
 
-        {/* Action Buttons Row */}
-        <div className="flex gap-2">
-            {/* Submit Request (Secondary Action) */}
-            <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg font-bold text-xs border border-white/5 transition-all">
-                <PlusCircle size={14} />
-                <span>Request</span>
-            </button>
-
-            {/* Process Button (Primary Action) */}
-            <button
-                type="button"
-                onClick={() => onProcessCsv?.()}
-                disabled={!isProcessEnabled}
-                className={`
-                    flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-bold text-xs transition-all
-                    ${isProcessEnabled 
-                    ? 'bg-[#a02ff1] hover:bg-[#8e25d9] text-white shadow-[0_0_15px_rgba(160,47,241,0.3)]' 
-                    : 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                    }
-                `}
-            >
-                <Play size={14} fill={isProcessEnabled ? "currentColor" : "none"} />
-                <span>Process</span>
-            </button>
-        </div>
+        {/* Process Upload Button */}
+        <button
+            type="button"
+            onClick={handleProcessUpload}
+            disabled={!selectedFile}
+            className={`
+                w-full flex items-center justify-center gap-2 py-2.5 rounded-lg font-bold text-xs transition-all
+                ${selectedFile 
+                ? 'bg-[#a02ff1] hover:bg-[#8e25d9] text-white shadow-[0_0_15px_rgba(160,47,241,0.3)]' 
+                : 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                }
+            `}
+        >
+            <Play size={14} fill={selectedFile ? "currentColor" : "none"} />
+            <span>Process Upload</span>
+        </button>
 
       </div>
     </div>

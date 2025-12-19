@@ -50,7 +50,19 @@ const CSVUpload = () => {
     } catch (error) {
       console.error("Upload failed:", error);
       setUploadStatus('error');
-      setErrorMessage("Failed to process file. Please ensure it's a valid FOCUS or Billing CSV.");
+      
+      // Show more detailed error message
+      if (error.response) {
+        // Server responded with error
+        const serverError = error.response.data?.error || error.response.data?.details || 'Server error occurred';
+        setErrorMessage(`Failed to process file: ${serverError}. Please ensure it's a valid FOCUS or Billing CSV.`);
+      } else if (error.request) {
+        // Request was made but no response received
+        setErrorMessage("Cannot connect to backend server. Please ensure the backend is running on port 5000.");
+      } else {
+        // Something else happened
+        setErrorMessage(`Failed to process file: ${error.message}. Please ensure it's a valid FOCUS or Billing CSV.`);
+      }
     }
   };
 

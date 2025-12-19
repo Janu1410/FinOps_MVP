@@ -82,7 +82,7 @@ const InquirySection = () => {
           </h2>
           
           <p className="text-gray-400 text-lg mb-8 leading-relaxed">
-            Book a 3–4 week <strong>RevOps Audit</strong> or <strong>Cloud FinOps Audit</strong>. 
+            Book a 3–4 week <strong>Cloud FinOps Audit</strong>. 
             We deliver a focused 90-day plan so you can hit plan and expand margins.
           </p>
 
@@ -148,7 +148,6 @@ const InquirySection = () => {
             <motion.div variants={formItemVariants} className="space-y-1.5">
               <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">I am interested in</label>
               <select className="w-full bg-[#0f0f11]/50 border border-white/10 rounded-lg p-2.5 text-sm text-white focus:border-[#8B2FC9] focus:outline-none transition-all focus:ring-2 focus:ring-[#8B2FC9]/20 cursor-pointer">
-                <option className="bg-[#0f0f11]">RevOps Audit (3-4 Weeks)</option>
                 <option className="bg-[#0f0f11]">Cloud FinOps Audit (3-4 Weeks)</option>
                 <option className="bg-[#0f0f11]">Monthly Subscription Bundle</option>
                 <option className="bg-[#0f0f11]">Other Inquiry</option>

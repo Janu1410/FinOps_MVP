@@ -12,24 +12,18 @@ const Footer = () => {
             
             {/* --- LOGO SECTION --- */}
             <a href="#" className="flex items-center gap-2 mb-6 group">
-              {/* The Geometric Icon - Resized to w-6 h-6 to match text */}
-              <div className="relative w-6 h-6 rounded-full overflow-hidden bg-black border border-white/5 group-hover:border-[#a02ff1]/50 transition-colors">
-                {/* LEFT HALF: #7e32ec */}
-                <div className="absolute left-0 top-0 w-[44%] h-full bg-[#7e32ec]"></div>
-                {/* RIGHT HALF: #a02ff1 */}
-                <div className="absolute right-0 top-0 w-[44%] h-full flex flex-col justify-between">
-                    <div className="h-[46%] w-full bg-[#a02ff1]"></div> {/* Top Right */}
-                    <div className="h-[46%] w-full bg-[#a02ff1]"></div> {/* Bottom Right */}
-                </div>
-              </div>
-              
+              <img 
+                src="/k&cologo.svg" 
+                alt="K&Co Logo" 
+                className="w-10 h-10 object-contain group-hover:opacity-90 transition-opacity"
+              />
               <span className="text-xl font-bold text-white group-hover:text-white/90 transition-colors">
                 K&Co.
               </span>
             </a>
 
             <p className="text-gray-400 text-sm mb-6">
-              Your RevOps & FinOps Operating Partner. We help you hit plan and
+              Your FinOps Operating Partner. We help you hit plan and
               expand margins.
             </p>
             <div className="space-y-3">
@@ -60,7 +54,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="#" className="hover:text-[#8B2FC9] transition-colors">
-                  RevOps Analytics
+                  FinOps Analytics
                 </a>
               </li>
               <li>

@@ -16,9 +16,14 @@ const FilterBar = ({ data, filters, onChange, groupBy, onGroupChange }) => {
       <select
         value={filters[field]}
         onChange={(e) => onChange(prev => ({ ...prev, [field]: e.target.value }))}
-        className="appearance-none bg-[#0f0f11] border border-white/10 hover:border-[#a02ff1]/50 rounded-lg pl-3 pr-8 py-2 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#a02ff1] transition-all min-w-[140px] cursor-pointer text-gray-300"
+        className="appearance-none bg-[#0f0f11] border border-white/10 hover:border-[#a02ff1]/50 rounded-lg pl-3 pr-8 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#a02ff1]/50 focus:shadow-[0_0_15px_rgba(160,47,241,0.4)] transition-all min-w-[140px] cursor-pointer text-gray-300"
+        style={{
+          colorScheme: 'dark'
+        }}
       >
-        {getOptions(label).map(opt => <option key={opt} value={opt}>{opt}</option>)}
+        {getOptions(label).map(opt => (
+          <option key={opt} value={opt} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>{opt}</option>
+        ))}
       </select>
       <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500" />
     </div>
@@ -58,9 +63,14 @@ const FilterBar = ({ data, filters, onChange, groupBy, onGroupChange }) => {
             <select
                 value={groupBy}
                 onChange={(e) => onGroupChange(e.target.value)}
-                className="appearance-none bg-[#0f0f11] border border-blue-500/30 hover:border-blue-500/70 rounded-lg pl-3 pr-8 py-2 text-xs font-bold text-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all min-w-[140px] cursor-pointer"
+                className="appearance-none bg-[#0f0f11] border border-blue-500/30 hover:border-blue-500/70 rounded-lg pl-3 pr-8 py-2 text-xs font-bold text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all min-w-[140px] cursor-pointer"
+                style={{
+                  colorScheme: 'dark'
+                }}
             >
-                {groupOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                {groupOptions.map(opt => (
+                  <option key={opt.value} value={opt.value} style={{ backgroundColor: '#0f0f11', color: '#dbeafe' }}>{opt.label}</option>
+                ))}
             </select>
             <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400" />
          </div>

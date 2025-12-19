@@ -12,7 +12,8 @@ import Features from './components/Features';
 import Pricing from './components/Pricing';
 import InquirySection from './components/InquirySection';
 import Footer from './components/Footer';
-import Dashboard from './pages/DashboardPage';
+import Dashboard from './components/Dashboard/DashboardPage';
+import DataExplorerPage from './components/Dashboard/DataExplorerPage';
 import CSVUpload from './components/CSVUpload';
 
 // Auth Pages
@@ -55,7 +56,7 @@ function App() {
           element={<SignUpPage />} 
         />
 
-        {/* Protected Dashboard Route */}
+        {/* Protected Dashboard Routes */}
         <Route 
           path="/dashboard" 
           element={
@@ -65,6 +66,19 @@ function App() {
               </SignedIn>
               <SignedOut>
                  {/* Redirect to sign-in if they try to access dashboard without logging in */}
+                <Navigate to="/sign-in" />
+              </SignedOut>
+            </>
+          } 
+        />
+        <Route 
+          path="/dashboard/data-explorer" 
+          element={
+            <>
+              <SignedIn>
+                <DataExplorerPage />
+              </SignedIn>
+              <SignedOut>
                 <Navigate to="/sign-in" />
               </SignedOut>
             </>

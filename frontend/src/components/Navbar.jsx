@@ -27,13 +27,11 @@ const Navbar = () => {
           
           {/* --- LOGO --- */}
           <Link to="/" className="flex items-center gap-2 group"> 
-            <div className="relative w-6 h-6 rounded-full overflow-hidden bg-black border border-white/5 group-hover:border-[#a02ff1]/50 transition-colors">
-              <div className="absolute left-0 top-0 w-[44%] h-full bg-[#7e32ec]"></div>
-              <div className="absolute right-0 top-0 w-[44%] h-full flex flex-col justify-between">
-                  <div className="h-[46%] w-full bg-[#a02ff1]"></div>
-                  <div className="h-[46%] w-full bg-[#a02ff1]"></div>
-              </div>
-            </div>
+            <img 
+              src="/k&cologo.svg" 
+              alt="K&Co Logo" 
+              className="w-10 h-10 object-contain group-hover:opacity-90 transition-opacity"
+            />
             <span className="text-2xl font-bold tracking-tight text-white group-hover:text-white/90 transition-colors">
               K&Co.
             </span>
