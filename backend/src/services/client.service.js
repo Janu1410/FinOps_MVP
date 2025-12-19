@@ -11,3 +11,7 @@ export const getAllClients = async () => {
 export const getClientById = async (id) => {
   return await Client.findByPk(id, { include: { model: User, as: 'users' } });
 };
+
+export const getClientByEmail = async (email) => {
+  return Client.findOne({ where: { email } });
+};
