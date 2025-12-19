@@ -21,7 +21,7 @@ import SignUpPage from './components/Auth/SignUpPage';
 
 import './index.css';
 import VerifyEmailPage from './components/Auth/VerifyEmailPage';
-
+import DataExplore from './components/Dashboard/DataExplorer';
 const Home = () => (
   <div className="min-h-screen bg-[#0f0f11] font-sans overflow-x-hidden">
     <Navbar /> 
@@ -62,7 +62,7 @@ function App() {
           path="/dashboard/data-explorer" 
           element={
             <>
-                <DataExplorerPage />
+                <DataExplore />
             </>
           } 
         />
