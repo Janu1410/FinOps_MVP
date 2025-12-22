@@ -366,3 +366,4 @@ const DataQuality = ({ data }) => {
 };
 
 export default DataQuality;
+
