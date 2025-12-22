@@ -2,14 +2,14 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Components
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import FinOpsSection from './components/FinOpsSection';
-import Features from './components/Features';
-import Pricing from './components/Pricing';
-import InquirySection from './components/InquirySection';
-import Footer from './components/Footer';
+import Navbar from './components/Home/Navbar';
+import Hero from './components/Home/Hero';
+import About from './components/Home/About';
+import FinOpsSection from './components/Home/FinOpsSection';
+import Features from './components/Home/Features';
+import Pricing from './components/Home/Pricing';
+import InquirySection from './components/Home/InquirySection';
+import Footer from './components/Home/Footer';
 
 // Dashboard Components
 // NOTE: DashboardPage handles the internal routing for data-explorer, cost-analysis, etc.

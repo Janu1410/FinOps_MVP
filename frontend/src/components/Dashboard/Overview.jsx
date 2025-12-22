@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import FilterBar from './FilterBar';
-import KpiGrid from './KpiGrid';
-import CostTrendChart from './CostTrendChart';
-import ServiceSpendChart from './ServiceSpendChart';
-import RegionPieChart from './RegionPieChart';
+import FilterBar from './Views/FilterBar';
+import KpiGrid from './Views/KpiGrid';
+import CostTrendChart from './Views/CostTrendChart';
+import ServiceSpendChart from './Views/ServiceSpendChart';
+import RegionPieChart from './Views/RegionPieChart';
 
 const Overview = ({ data }) => {
   // --- STATE (Moved from DashboardPage) ---
