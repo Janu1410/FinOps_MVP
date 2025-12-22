@@ -3,7 +3,7 @@ import FilterBar from './Views/FilterBar';
 import KpiGrid from './Views/KpiGrid';
 import CostTrendChart from './Views/CostTrendChart';
 import ServiceSpendChart from './Views/ServiceSpendChart';
-import WorldMap from './Views/WorldMap';
+import MostPopularRegion from './Views/MostPopularRegion';
 
 const Overview = ({ data, filters = { provider: 'All', service: 'All', region: 'All' }, onFiltersChange }) => {
   // --- STATE (Moved from DashboardPage) ---
@@ -201,9 +201,9 @@ const Overview = ({ data, filters = { provider: 'All', service: 'All', region: '
         />
       </div>
 
-      {/* World Map - Region Breakdown */}
+      {/* Most Popular Region - Large Visualization */}
       <div className="w-full">
-        <WorldMap 
+        <MostPopularRegion 
           data={processedData.regionData} 
           totalSpend={processedData.totalSpend}
         />

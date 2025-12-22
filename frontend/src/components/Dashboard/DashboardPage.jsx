@@ -14,6 +14,8 @@ import CostAnalysis from './CostAnalysis';
 import CostDrivers from './CostDrivers';
 import ResourceInventory from './ResourceInventory'; // ✅ Preserved
 import DataQuality from './DataQuality'; // ✅ Preserved
+import Optimization from './Optimization';
+import Reports from './Reports';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -131,6 +133,8 @@ const DashboardPage = () => {
   const isCostDrivers = location.pathname.includes('/cost-drivers'); 
   const isResources = location.pathname.includes('/resources'); // ✅ Preserved
   const isDataQuality = location.pathname.includes('/data-quality'); // ✅ Preserved
+  const isOptimization = location.pathname.includes('/optimization');
+  const isReports = location.pathname.includes('/reports');
 
   const getPageTitle = () => {
     if (isDataExplorer) return "Data Explorer";
@@ -138,6 +142,8 @@ const DashboardPage = () => {
     if (isCostDrivers) return "Cost Drivers"; 
     if (isResources) return "Resource Inventory"; 
     if (isDataQuality) return "Data Quality Hub";
+    if (isOptimization) return "Optimization";
+    if (isReports) return "Reports";
     return "Overview";
   };
 
@@ -192,12 +198,28 @@ const DashboardPage = () => {
             </div>
           )}
 
-          {/* 6. OVERVIEW VIEW (Default) */}
+          {/* 6. OPTIMIZATION VIEW */}
+          {isOptimization && (
+            <div className="animate-in fade-in zoom-in-95 duration-300">
+              <Optimization data={rawData} />
+            </div>
+          )}
+
+          {/* 7. REPORTS VIEW */}
+          {isReports && (
+            <div className="animate-in fade-in zoom-in-95 duration-300">
+              <Reports data={rawData} />
+            </div>
+          )}
+
+          {/* 8. OVERVIEW VIEW (Default) */}
           {!isDataExplorer && 
            !isCostAnalysis && 
            !isCostDrivers && 
            !isResources && 
-           !isDataQuality && (
+           !isDataQuality && 
+           !isOptimization && 
+           !isReports && (
              <Overview 
                 data={rawData} 
                 filters={filters} 
