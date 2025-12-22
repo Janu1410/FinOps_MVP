@@ -235,7 +235,7 @@ const isAccounts = location.pathname.includes('/accounts');
                 filters={filters} 
                 onFiltersChange={setFilters} 
              />
-          )}
+          ))}
 
         </div>
       </main>
