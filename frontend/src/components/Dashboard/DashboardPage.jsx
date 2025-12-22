@@ -14,6 +14,7 @@ import CostAnalysis from './CostAnalysis';
 import CostDrivers from './CostDrivers';
 import ResourceInventory from './ResourceInventory'; // ✅ Preserved
 import DataQuality from './DataQuality'; // ✅ Preserved
+import AccountsOwnership from './AccountsOwnership';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -131,6 +132,7 @@ const DashboardPage = () => {
   const isCostDrivers = location.pathname.includes('/cost-drivers'); 
   const isResources = location.pathname.includes('/resources'); // ✅ Preserved
   const isDataQuality = location.pathname.includes('/data-quality'); // ✅ Preserved
+const isAccounts = location.pathname.includes('/accounts');
 
   const getPageTitle = () => {
     if (isDataExplorer) return "Data Explorer";
@@ -192,12 +194,19 @@ const DashboardPage = () => {
             </div>
           )}
 
+          {isAccounts && (
+   <div className="animate-in fade-in zoom-in-95 duration-300">
+      <AccountsOwnership data={rawData} />
+   </div>
+)}
+
           {/* 6. OVERVIEW VIEW (Default) */}
           {!isDataExplorer && 
            !isCostAnalysis && 
            !isCostDrivers && 
            !isResources && 
-           !isDataQuality && (
+           !isDataQuality && 
+           !isAccounts && (
              <Overview 
                 data={rawData} 
                 filters={filters} 
