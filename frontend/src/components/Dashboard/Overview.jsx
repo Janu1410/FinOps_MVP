@@ -3,9 +3,7 @@ import FilterBar from './Views/FilterBar';
 import KpiGrid from './Views/KpiGrid';
 import CostTrendChart from './Views/CostTrendChart';
 import ServiceSpendChart from './Views/ServiceSpendChart';
-import RegionPieChart from './Views/RegionPieChart';
-import CostPredictability from './Views/CostPredictability';
-import CostConcentration from './Views/CostConcentration';
+import WorldMap from './Views/WorldMap';
 
 const Overview = ({ data, filters = { provider: 'All', service: 'All', region: 'All' }, onFiltersChange }) => {
   // --- STATE (Moved from DashboardPage) ---
@@ -203,19 +201,11 @@ const Overview = ({ data, filters = { provider: 'All', service: 'All', region: '
         />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <RegionPieChart 
+      {/* World Map - Region Breakdown */}
+      <div className="w-full">
+        <WorldMap 
           data={processedData.regionData} 
-          limit={chartFilters.pieChart.limit}
-          onLimitChange={(limit) => setChartFilters(prev => ({ ...prev, pieChart: { limit } }))}
           totalSpend={processedData.totalSpend}
-        />
-        <CostConcentration 
-          groupedData={processedData.groupedData}
-          totalSpend={processedData.totalSpend}
-        />
-        <CostPredictability 
-          dailyData={processedData.dailyData}
         />
       </div>
       
