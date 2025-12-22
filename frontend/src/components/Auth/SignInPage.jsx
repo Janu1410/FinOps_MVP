@@ -16,7 +16,7 @@ export default function SignInPage() {
     const response = await signIn({ email, password });
     if (response.success) {
       // Redirect to dashboard or desired page after successful sign-in
-       navigate("/dashboard");
+       navigate("/upload");
       return;
     } else {
       if(response.status == 403){
