@@ -1,5 +1,5 @@
-import * as clientService from '../services/client.service.js';
-import { isValidEmail } from '../utils/emailValidation.js';
+import * as clientService from './client.service.js';
+import { isValidEmail } from '../../utils/emailValidation.js';
 
 export const createClient = async (req, res) => {
   try {

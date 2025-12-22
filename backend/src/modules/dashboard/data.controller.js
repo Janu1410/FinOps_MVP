@@ -1,6 +1,6 @@
 import fs from "fs";
 import csv from "csv-parser";
-import { processRecords } from "../utils/processRecords.js";
+import { processRecords } from "../../utils/processRecords.js";
 
 export const processCSV = (req, res) => {
   console.log("Received file upload request...");
