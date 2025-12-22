@@ -1,47 +1,70 @@
 // src/components/dashboard/KpiGrid.jsx
 import React, { useState } from 'react';
-import { DollarSign, MapPin, Server, TrendingUp, Cloud, Tag, FileX, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { DollarSign, MapPin, Server, TrendingUp, Cloud, Tag, FileX, ChevronDown, ChevronUp, X, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const KpiCard = ({ title, value, icon: Icon, color, subValue, delay, onClick }) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: delay * 0.1 }}
-    whileHover={{ y: -5 }}
-    onClick={onClick}
-    // COMPACT: p-3 padding (was p-4)
-    className="bg-[#1a1b20]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl shadow-lg relative overflow-hidden group min-h-[100px] cursor-pointer hover:border-[#a02ff1]/30 transition-all"
-  >
-    <div className={`absolute -top-10 -right-10 p-16 ${color} bg-opacity-5 blur-[40px] rounded-full group-hover:bg-opacity-10 transition-all duration-500`}></div>
-    
-    <div className="relative z-10 flex flex-col h-full justify-between">
+const KpiCard = ({ title, value, icon: Icon, color, subValue, delay, onClick, contextLabel, changePercent, showChangeTooltip }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: delay * 0.1 }}
+      whileHover={{ y: -5 }}
+      onClick={onClick}
+      className="bg-[#1a1b20]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl shadow-lg relative overflow-hidden group min-h-[100px] cursor-pointer hover:border-[#a02ff1]/30 transition-all"
+    >
+      <div className={`absolute -top-10 -right-10 p-16 ${color} bg-opacity-5 blur-[40px] rounded-full group-hover:bg-opacity-10 transition-all duration-500`}></div>
       
-      {/* Header Row: Icon + Badge */}
-      <div className="flex justify-between items-start mb-2">
-        <div className={`p-1.5 rounded-lg bg-white/5 ${color} bg-opacity-10 ring-1 ring-white/5`}>
-          <Icon size={16} className={color} />
-        </div>
-        {subValue && (
-            <span className="text-[9px] bg-white/5 px-1.5 py-0.5 rounded text-gray-400 border border-white/5 font-mono whitespace-nowrap">
-              {subValue}
-            </span>
-        )}
-      </div>
-
-      {/* Content Row: Title + Value */}
-      <div>
-        <div className="text-gray-500 text-[9px] font-bold uppercase tracking-widest truncate">{title}</div>
+      <div className="relative z-10 flex flex-col h-full justify-between">
         
-        {/* COMPACT FONT: text-xl (was 2xl) + truncate to prevent wrapping */}
-        <div className="text-xl font-bold text-white tracking-tight mt-0.5 truncate" title={value}>
-          {value}
+        {/* Header Row: Icon + Badge */}
+        <div className="flex justify-between items-start mb-2">
+          <div className={`p-1.5 rounded-lg bg-white/5 ${color} bg-opacity-10 ring-1 ring-white/5`}>
+            <Icon size={16} className={color} />
+          </div>
+          {subValue && (
+            <div className="relative">
+              <span 
+                className="text-[9px] bg-white/5 px-1.5 py-0.5 rounded text-gray-400 border border-white/5 font-mono whitespace-nowrap cursor-help"
+                onMouseEnter={() => showChangeTooltip && setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
+                {subValue}
+              </span>
+              {showTooltip && showChangeTooltip && (
+                <div className="absolute right-0 top-full mt-1 w-48 bg-[#1a1b20] border border-white/10 rounded-lg p-2 shadow-2xl z-50">
+                  <p className="text-[10px] text-gray-300">
+                    Compared to previous billing period
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      </div>
 
-    </div>
-  </motion.div>
-);
+        {/* Content Row: Title + Value */}
+        <div>
+          <div className="text-gray-500 text-[9px] font-bold uppercase tracking-widest truncate">{title}</div>
+          
+          {/* COMPACT FONT: text-xl (was 2xl) + truncate to prevent wrapping */}
+          <div className="text-xl font-bold text-white tracking-tight mt-0.5 truncate" title={value}>
+            {value}
+          </div>
+          
+          {/* Context Label */}
+          {contextLabel && (
+            <div className="text-[9px] text-gray-500 mt-1.5">
+              {contextLabel}
+            </div>
+          )}
+        </div>
+
+      </div>
+    </motion.div>
+  );
+};
 
 const KpiGrid = ({ 
   spend, 
@@ -51,7 +74,10 @@ const KpiGrid = ({
   topProvider = { name: 'N/A', value: 0 },
   untaggedCost = 0,
   missingMetadataCost = 0,
-  filteredRecords = []
+  filteredRecords = [],
+  billingPeriod = null,
+  topRegionPercent = 0,
+  topServicePercent = 0
 }) => {
   const [showMoreCards, setShowMoreCards] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -218,7 +244,9 @@ const KpiGrid = ({
       value: formatCurrency(spend),
       icon: DollarSign,
       color: "text-[#a02ff1]",
-      subValue: formatPercent(spendChangePercent)
+      subValue: Math.abs(spendChangePercent) > 0.1 ? formatPercent(spendChangePercent) : null,
+      contextLabel: billingPeriod ? `Billing period: ${billingPeriod}` : null,
+      showChangeTooltip: Math.abs(spendChangePercent) > 0.1
     },
     {
       id: 'top-cost-region',
@@ -227,16 +255,20 @@ const KpiGrid = ({
       value: topRegion?.name || 'N/A',
       icon: MapPin,
       color: "text-blue-400",
-      subValue: formatCurrency(topRegion?.value || 0)
+      subValue: null,
+      contextLabel: topRegionPercent > 0 ? `${topRegionPercent.toFixed(0)}% of total spend` : null,
+      showChangeTooltip: false
     },
     {
       id: 'top-cost-service',
       delay: 2,
-      title: "Top Cost Driver (Service)",
+      title: "Top Cost Driver",
       value: topService?.name || 'N/A',
       icon: Server,
       color: "text-emerald-400",
-      subValue: formatCurrency(topService?.value || 0)
+      subValue: null,
+      contextLabel: topServicePercent > 0 ? `${topServicePercent.toFixed(1)}% cost concentration` : null,
+      showChangeTooltip: false
     }
   ];
 
@@ -287,7 +319,7 @@ const KpiGrid = ({
         {/* Grid matches the tight layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-1">
           {baseCards.map((card, index) => (
-            <KpiCard 
+      <KpiCard 
               key={index}
               delay={card.delay} 
               title={card.title} 
@@ -295,13 +327,15 @@ const KpiGrid = ({
               icon={card.icon} 
               color={card.color} 
               subValue={card.subValue}
+              contextLabel={card.contextLabel}
+              showChangeTooltip={card.showChangeTooltip}
               onClick={() => setSelectedCard(card.id)}
             />
           ))}
           
           {/* Additional Cards - Shown when expanded */}
           {showMoreCards && additionalCards.map((card, index) => (
-            <KpiCard 
+      <KpiCard 
               key={`additional-${index}`}
               delay={card.delay} 
               title={card.title} 
@@ -310,7 +344,7 @@ const KpiGrid = ({
               color={card.color} 
               subValue={card.subValue}
               onClick={() => setSelectedCard(card.id)}
-            />
+      />
           ))}
         </div>
 
@@ -326,8 +360,8 @@ const KpiGrid = ({
               <ChevronDown 
                 size={12} 
                 className={`transition-transform duration-300 ${showMoreCards ? 'rotate-180' : ''}`} 
-              />
-            </div>
+      />
+    </div>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent shadow-[0_0_8px_rgba(255,255,255,0.1)] group-hover:shadow-[0_0_12px_rgba(160,47,241,0.3)] transition-shadow"></div>
           </button>
         </div>

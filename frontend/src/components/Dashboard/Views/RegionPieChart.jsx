@@ -4,8 +4,38 @@ import { MapPin, Settings2 } from 'lucide-react';
 
 const COLORS = ['#a02ff1', '#60a5fa', '#34d399', '#f87171', '#fbbf24', '#a78bfa', '#fb7185', '#38bdf8'];
 
-const RegionPieChart = ({ data, limit = 8, onLimitChange }) => {
+const RegionPieChart = ({ data, limit = 8, onLimitChange, totalSpend = 0 }) => {
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+  
+  // Process data to add "Others" bucket for regions < 2%
+  const processedData = React.useMemo(() => {
+    if (!data || data.length === 0) return [];
+    
+    const threshold = totalSpend * 0.02; // 2% threshold
+    const mainRegions = [];
+    let othersTotal = 0;
+    
+    data.forEach(item => {
+      if (item.value >= threshold) {
+        mainRegions.push(item);
+      } else {
+        othersTotal += item.value;
+      }
+    });
+    
+    // Sort by value descending
+    mainRegions.sort((a, b) => b.value - a.value);
+    
+    // Add "Others" if there are any small regions
+    if (othersTotal > 0) {
+      mainRegions.push({
+        name: 'Others',
+        value: othersTotal
+      });
+    }
+    
+    return mainRegions;
+  }, [data, totalSpend]);
 
   return (
     <div className="bg-[#1a1b20]/60 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex flex-col shadow-xl min-h-[300px]">
@@ -39,7 +69,7 @@ const RegionPieChart = ({ data, limit = 8, onLimitChange }) => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart margin={{ top: 50, right: 50, bottom: 50, left: 50 }}>
               <Pie
-                data={data}
+                data={processedData}
                 cx="50%"
                 cy="50%"
                 labelLine={{ stroke: '#9ca3af', strokeWidth: 1 }}
@@ -73,7 +103,7 @@ const RegionPieChart = ({ data, limit = 8, onLimitChange }) => {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {data.map((entry, index) => (
+                {processedData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -86,10 +116,10 @@ const RegionPieChart = ({ data, limit = 8, onLimitChange }) => {
           </ResponsiveContainer>
         </div>
         
-        {/* Legend at Bottom - Horizontal Grid */}
+        {/* Legend at Bottom - Horizontal Grid, Sorted by Spend Descending */}
         <div className="w-full pt-2 border-t border-white/5">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {data.map((entry, index) => (
+            {processedData.map((entry, index) => (
               <div key={`legend-${index}`} className="flex items-center gap-2 text-[10px]">
                 <div 
                   className="w-3 h-3 rounded-sm flex-shrink-0" 
@@ -111,4 +141,3 @@ const RegionPieChart = ({ data, limit = 8, onLimitChange }) => {
 };
 
 export default RegionPieChart;
-

@@ -4,10 +4,12 @@ import KpiGrid from './Views/KpiGrid';
 import CostTrendChart from './Views/CostTrendChart';
 import ServiceSpendChart from './Views/ServiceSpendChart';
 import RegionPieChart from './Views/RegionPieChart';
+import CostPredictability from './Views/CostPredictability';
+import CostConcentration from './Views/CostConcentration';
 
-const Overview = ({ data }) => {
+const Overview = ({ data, filters = { provider: 'All', service: 'All', region: 'All' }, onFiltersChange }) => {
   // --- STATE (Moved from DashboardPage) ---
-  const [filters, setFilters] = useState({ provider: 'All', service: 'All', region: 'All' });
+  // Filters are now passed as props from DashboardPage
   const [groupBy, setGroupBy] = useState('ServiceName'); 
   const [chartFilters, setChartFilters] = useState({
     trendChart: { limit: 30 }, 
@@ -117,6 +119,33 @@ const Overview = ({ data }) => {
       })
       .reduce((acc, curr) => acc + (parseFloat(curr.BilledCost) || 0), 0);
 
+    // Calculate billing period from data
+    const getBillingPeriod = () => {
+      if (dailyData.length === 0) return null;
+      const dates = dailyData.map(d => {
+        try {
+          const dateStr = d.date;
+          if (!dateStr) return null;
+          const parts = dateStr.split('-');
+          if (parts.length === 3) {
+            return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          }
+          return new Date(dateStr);
+        } catch {
+          return null;
+        }
+      }).filter(d => d && !isNaN(d.getTime()));
+      
+      if (dates.length === 0) return null;
+      const latestDate = new Date(Math.max(...dates.map(d => d.getTime())));
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${monthNames[latestDate.getMonth()]} ${latestDate.getFullYear()}`;
+    };
+
+    const billingPeriod = getBillingPeriod();
+    const topRegionPercent = topRegion?.[1] && totalSpend > 0 ? (topRegion[1] / totalSpend) * 100 : 0;
+    const topServicePercent = groupedData[0]?.value && totalSpend > 0 ? (groupedData[0].value / totalSpend) * 100 : 0;
+
     return { 
       totalSpend, dailyData, groupedData, regionData,
       topRegion: { name: topRegion?.[0], value: topRegion?.[1] },
@@ -125,7 +154,10 @@ const Overview = ({ data }) => {
       spendChangePercent,
       topProvider: { name: topProvider?.[0] || 'N/A', value: topProvider?.[1] || 0 },
       untaggedCost,
-      missingMetadataCost
+      missingMetadataCost,
+      billingPeriod,
+      topRegionPercent,
+      topServicePercent
     };
   }, [data, filters, groupBy, chartFilters]);
 
@@ -136,7 +168,7 @@ const Overview = ({ data }) => {
       <FilterBar 
         data={data} 
         filters={filters} 
-        onChange={setFilters}
+        onChange={onFiltersChange}
         groupBy={groupBy}
         onGroupChange={setGroupBy} 
       />
@@ -150,6 +182,9 @@ const Overview = ({ data }) => {
         untaggedCost={processedData.untaggedCost}
         missingMetadataCost={processedData.missingMetadataCost}
         filteredRecords={processedData.filteredRecords}
+        billingPeriod={processedData.billingPeriod}
+        topRegionPercent={processedData.topRegionPercent}
+        topServicePercent={processedData.topServicePercent}
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -157,12 +192,14 @@ const Overview = ({ data }) => {
           data={processedData.dailyData} 
           limit={chartFilters.trendChart.limit}
           onLimitChange={(limit) => setChartFilters(prev => ({ ...prev, trendChart: { limit } }))}
+          billingPeriod={processedData.billingPeriod}
         />
         <ServiceSpendChart 
           data={processedData.groupedData} 
           title={`Spend by ${groupBy.replace(/([A-Z])/g, ' $1').trim()}`}
           limit={chartFilters.barChart.limit}
           onLimitChange={(limit) => setChartFilters(prev => ({ ...prev, barChart: { limit } }))}
+          totalSpend={processedData.totalSpend}
         />
       </div>
 
@@ -171,16 +208,22 @@ const Overview = ({ data }) => {
           data={processedData.regionData} 
           limit={chartFilters.pieChart.limit}
           onLimitChange={(limit) => setChartFilters(prev => ({ ...prev, pieChart: { limit } }))}
+          totalSpend={processedData.totalSpend}
         />
-        <ServiceSpendChart 
-          data={processedData.groupedData.slice(0, 6)} 
-          title="Top Services Breakdown"
-          limit={6}
+        <CostConcentration 
+          groupedData={processedData.groupedData}
+          totalSpend={processedData.totalSpend}
         />
-        <CostTrendChart 
-          data={processedData.dailyData.slice(-14)} 
-          limit={14}
+        <CostPredictability 
+          dailyData={processedData.dailyData}
         />
+      </div>
+      
+      {/* Footer */}
+      <div className="flex justify-end items-center gap-4 pt-4 border-t border-white/5 text-[10px] text-gray-500">
+        <span>Data source: Billing CSV</span>
+        <span>•</span>
+        <span>Last processed: {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
       </div>
     </div>
   );

@@ -1,9 +1,15 @@
-import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useMemo } from 'react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { TrendingUp, Settings2 } from 'lucide-react';
 
-const CostTrendChart = ({ data, limit = 30, onLimitChange }) => {
+const CostTrendChart = ({ data, limit = 30, onLimitChange, billingPeriod = null }) => {
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+  
+  const avgDailySpend = useMemo(() => {
+    if (!data || data.length === 0) return 0;
+    const total = data.reduce((sum, d) => sum + d.cost, 0);
+    return total / data.length;
+  }, [data]);
 
   return (
     // Reduced padding (p-5) and min-height (min-h-[300px])
@@ -23,10 +29,18 @@ const CostTrendChart = ({ data, limit = 30, onLimitChange }) => {
                 colorScheme: 'dark'
               }}
             >
-              <option value={14} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 14 days</option>
-              <option value={30} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 30 days</option>
-              <option value={60} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 60 days</option>
-              <option value={90} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 90 days</option>
+              {billingPeriod ? (
+                <option value={limit} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>
+                  Billing period ({billingPeriod})
+                </option>
+              ) : (
+                <>
+                  <option value={14} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 14 days</option>
+                  <option value={30} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 30 days</option>
+                  <option value={60} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 60 days</option>
+                  <option value={90} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Last 90 days</option>
+                </>
+              )}
             </select>
           </div>
         )}
@@ -47,7 +61,15 @@ const CostTrendChart = ({ data, limit = 30, onLimitChange }) => {
             <Tooltip 
               contentStyle={{ backgroundColor: '#1a1b20', borderColor: 'rgba(255,255,255,0.2)', borderRadius: '8px', fontSize: '12px', color: '#fff', padding: '8px 12px' }} 
               itemStyle={{ color: '#fff' }} 
-              formatter={(value) => [formatCurrency(value), 'Cost']} 
+              formatter={(value) => [formatCurrency(value), 'Cost']}
+              labelFormatter={(label) => `Date: ${label}`}
+            />
+            <ReferenceLine 
+              y={avgDailySpend} 
+              stroke="#6b7280" 
+              strokeDasharray="3 3" 
+              strokeWidth={1}
+              label={{ value: `Avg daily spend: ${formatCurrency(avgDailySpend)}`, position: 'right', fill: '#9ca3af', fontSize: 9 }}
             />
             <Area type="monotone" dataKey="cost" stroke="#a02ff1" strokeWidth={2} fillOpacity={1} fill="url(#colorCost)" />
           </AreaChart>

@@ -4,11 +4,17 @@ import { PieChart, Settings2 } from 'lucide-react';
 
 const COLORS = ['#a02ff1', '#60a5fa', '#34d399', '#f87171', '#fbbf24'];
 
-const ServiceSpendChart = ({ data, title, limit = 8, onLimitChange }) => { 
+const ServiceSpendChart = ({ data, title, limit = 8, onLimitChange, totalSpend = 0 }) => { 
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
 
   // Calculate dynamic height based on number of items
   const chartHeight = Math.max(400, data.length * 35 + 100);
+  
+  // Truncate long names for display
+  const truncateName = (name, maxLength = 22) => {
+    if (name.length <= maxLength) return name;
+    return name.substring(0, maxLength - 3) + '...';
+  };
 
   return (
     // Compact Container: rounded-2xl, p-5, dynamic height
@@ -66,20 +72,26 @@ const ServiceSpendChart = ({ data, title, limit = 8, onLimitChange }) => {
               tick={{fill: '#d1d5db'}} 
               axisLine={false} 
               tickLine={false}
-              tickFormatter={(value) => {
-                // Truncate long names with better length
-                if (value.length > 22) {
-                  return value.substring(0, 20) + '...';
-                }
-                return value;
-              }}
+              tickFormatter={(value) => truncateName(value, 22)}
             />
             
             <Tooltip 
               cursor={{fill: 'rgba(255,255,255,0.05)', radius: 4}} 
               contentStyle={{ backgroundColor: '#1a1b20', borderColor: 'rgba(255,255,255,0.2)', borderRadius: '8px', fontSize: '12px', color: '#fff', padding: '8px 12px' }} 
               itemStyle={{ color: '#fff' }}
-              formatter={(value) => formatCurrency(value)} 
+              formatter={(value, name, props) => {
+                const percentage = totalSpend > 0 ? ((value / totalSpend) * 100).toFixed(1) : 0;
+                return [
+                  <div key="tooltip">
+                    <div>Cost: {formatCurrency(value)}</div>
+                    <div style={{ marginTop: '4px', fontSize: '11px', color: '#9ca3af' }}>
+                      Share of total: {percentage}%
+                    </div>
+                  </div>,
+                  props.payload.name
+                ];
+              }}
+              labelFormatter={(label) => label}
             />
             
             <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={30}>

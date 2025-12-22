@@ -14,6 +14,30 @@ export const useAuthStore = create((set) => ({
 
   error: null,
 
+  /* ================= FETCH USER ================= */
+  fetchUser: async () => {
+    try {
+      const res = await axios.get(`${API_URL}/auth/me`);
+      set({ user: res.data });
+      return { success: true, user: res.data };
+    } catch (err) {
+      set({ user: null });
+      return { success: false };
+    }
+  },
+
+  /* ================= UPDATE PROFILE ================= */
+  updateProfile: async ({ full_name }) => {
+    try {
+      const res = await axios.put(`${API_URL}/auth/profile`, { full_name });
+      set({ user: res.data.user });
+      return { success: true, message: res.data.message, user: res.data.user };
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Failed to update profile";
+      return { success: false, message: errorMessage };
+    }
+  },
+
   /* ================= SIGN UP ================= */
   signUp: async (payload) => {
     set({ isSigningUp: true, error: null });
@@ -49,12 +73,20 @@ export const useAuthStore = create((set) => ({
         password
       });
 
-      set({
-        user: res.data.user,
-        isSigningIn: false
-      });
-
-      
+      // After successful login, fetch full user data
+      try {
+        const userRes = await axios.get(`${API_URL}/auth/me`);
+        set({
+          user: userRes.data,
+          isSigningIn: false
+        });
+      } catch (userErr) {
+        // If /me fails, use the basic user data from signin
+        set({
+          user: res.data.user,
+          isSigningIn: false
+        });
+      }
 
       return { success: true };
     } catch (err) {
@@ -96,13 +128,18 @@ export const useAuthStore = create((set) => ({
   /* ================= LOGOUT ================= */
   logout: async () => {
     try {
-      await axios.post(`${API_URL}/auth/logout`);
+      await axios.get(`${API_URL}/auth/logout`);
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
+      // Clear user state
       set({
         user: null,
       });
+      // Clear all localStorage data
+      localStorage.removeItem('rawRecords');
+      localStorage.removeItem('finopsData');
+      localStorage.removeItem('finops_saved_views');
     }
   }
 }));

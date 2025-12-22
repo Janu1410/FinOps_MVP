@@ -348,9 +348,18 @@ const DataExplorer = ({ data }) => {
             {viewMode === 'pivot' && (
                <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-4">
                  <span className="text-xs text-gray-500">by</span>
-                 <select value={groupByCol || ''} onChange={(e) => setGroupByCol(e.target.value)} className="bg-black/40 border border-white/10 rounded px-2 py-1 text-xs text-white focus:border-[#a02ff1] outline-none">
-                   <option value="" disabled>Select Column...</option>
-                   {allColumns.map(col => <option key={col} value={col}>{col}</option>)}
+                 <select 
+                   value={groupByCol || ''} 
+                   onChange={(e) => setGroupByCol(e.target.value)} 
+                   className="bg-[#0f0f11] border border-white/10 rounded px-2 py-1 text-xs text-gray-300 focus:border-[#a02ff1] outline-none"
+                   style={{ colorScheme: 'dark' }}
+                 >
+                   <option value="" disabled style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>Select Column...</option>
+                   {allColumns.map(col => (
+                     <option key={col} value={col} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>
+                       {col}
+                     </option>
+                   ))}
                  </select>
                </div>
             )}
@@ -573,7 +582,20 @@ const DataExplorer = ({ data }) => {
       {/* FOOTER CONTROLS */}
       {viewMode === 'table' && (
         <div className="bg-[#0f0f11] px-4 py-2 border-t border-white/10 flex justify-between items-center text-xs text-gray-400 shrink-0">
-          <div className="flex items-center gap-4"><span>Page {currentPage} of {totalPages}</span><select value={rowsPerPage} onChange={(e) => setRowsPerPage(Number(e.target.value))} className="bg-black/40 border border-white/10 rounded px-2 py-1 focus:outline-none focus:border-[#a02ff1]"><option value={50}>50 rows</option><option value={100}>100 rows</option><option value={500}>500 rows</option><option value={1000}>1000 rows</option></select></div>
+          <div className="flex items-center gap-4">
+            <span>Page {currentPage} of {totalPages}</span>
+            <select 
+              value={rowsPerPage} 
+              onChange={(e) => setRowsPerPage(Number(e.target.value))} 
+              className="bg-[#0f0f11] border border-white/10 rounded px-2 py-1 text-xs text-gray-300 focus:outline-none focus:border-[#a02ff1]"
+              style={{ colorScheme: 'dark' }}
+            >
+              <option value={50} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>50 rows</option>
+              <option value={100} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>100 rows</option>
+              <option value={500} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>500 rows</option>
+              <option value={1000} style={{ backgroundColor: '#0f0f11', color: '#d1d5db' }}>1000 rows</option>
+            </select>
+          </div>
           <div className="flex gap-2"><button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-1.5 rounded hover:bg-white/10 disabled:opacity-30"><ChevronLeft size={16} /></button><button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="p-1.5 rounded hover:bg-white/10 disabled:opacity-30"><ChevronRight size={16} /></button></div>
         </div>
       )}

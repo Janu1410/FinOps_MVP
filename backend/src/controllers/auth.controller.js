@@ -183,6 +183,40 @@ export const getUser = async (req, res) => {
   }
 };
 
+export const updateProfile = async (req, res) => {
+  try {
+    const { full_name } = req.body;
+    const userId = req.user.id;
+
+    if (!full_name || full_name.trim() === '') {
+      return res.status(400).json({ message: "Full name is required" });
+    }
+
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.full_name = full_name.trim();
+    await user.save();
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role,
+        is_active: user.is_active,
+        createdAt: user.createdAt,
+      }
+    });
+  } catch (err) {
+    console.error("Update profile error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
