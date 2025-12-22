@@ -1,10 +1,10 @@
-import * as userService from "../services/user.service.js";
-import * as clientService from "../services/client.service.js";
-import { isValidEmail } from "../utils/emailValidation.js";
+import * as userService from "../user/user.service.js";
+import * as clientService from "../client/client.service.js";
+import { isValidEmail } from "../../utils/emailValidation.js";
 import bcrypt from "bcrypt";
-import { generateJWT } from "../utils/generateJWT.js";
-import { generateVerificationOTP } from "../utils/generateVerificationOTP.js";
-import { sendVerificationEmail } from "../utils/sendVerificationEmail.js";
+import { generateJWT } from "../../utils/generateJWT.js";
+import { generateVerificationOTP } from "../../utils/generateVerificationOTP.js";
+import { sendVerificationEmail } from "../../utils/sendVerificationEmail.js";
 
 export const signUp = async (req, res) => {
   try {

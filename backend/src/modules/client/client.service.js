@@ -1,4 +1,4 @@
-import { Client, User } from '../models/index.js';
+import { Client, User } from '../../models/index.js';
 
 export const createClient = async (data) => {
   return await Client.create(data);

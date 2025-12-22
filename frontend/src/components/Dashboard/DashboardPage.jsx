@@ -16,6 +16,7 @@ import ResourceInventory from './ResourceInventory'; // ✅ Preserved
 import DataQuality from './DataQuality'; // ✅ Preserved
 import Optimization from './Optimization';
 import Reports from './Reports';
+import AccountsOwnership from './AccountsOwnership';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -135,6 +136,7 @@ const DashboardPage = () => {
   const isDataQuality = location.pathname.includes('/data-quality'); // ✅ Preserved
   const isOptimization = location.pathname.includes('/optimization');
   const isReports = location.pathname.includes('/reports');
+const isAccounts = location.pathname.includes('/accounts');
 
   const getPageTitle = () => {
     if (isDataExplorer) return "Data Explorer";
@@ -213,6 +215,13 @@ const DashboardPage = () => {
           )}
 
           {/* 8. OVERVIEW VIEW (Default) */}
+          {isAccounts && (
+   <div className="animate-in fade-in zoom-in-95 duration-300">
+      <AccountsOwnership data={rawData} />
+   </div>
+)}
+
+          {/* 6. OVERVIEW VIEW (Default) */}
           {!isDataExplorer && 
            !isCostAnalysis && 
            !isCostDrivers && 
@@ -220,6 +229,7 @@ const DashboardPage = () => {
            !isDataQuality && 
            !isOptimization && 
            !isReports && (
+           !isAccounts && (
              <Overview 
                 data={rawData} 
                 filters={filters} 
@@ -232,5 +242,4 @@ const DashboardPage = () => {
     </div>
   );
 };
-
 export default DashboardPage;
