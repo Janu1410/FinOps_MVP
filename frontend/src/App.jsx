@@ -14,7 +14,7 @@ import Footer from './components/Home/Footer';
 import HowItWorks from './components/Home/HowItWorks';
 
 // --- NEW IMPORT HERE ---
-import HowItWorks from './components/Home/HowItWorks';
+
 
 // Dashboard Components
 // Dashboard
@@ -89,7 +89,7 @@ function App() {
         
         {/* Dashboard Route */}
         <Route path="/dashboard/*" element={<Dashboard />} />
-        <Route path="/verify-email/:email" element={<VerifyEmailPage />} />
+      
         <Route path='/book-slot' element={<SlotBookingPage />} />
 
         
