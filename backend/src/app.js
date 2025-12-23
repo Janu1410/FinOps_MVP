@@ -4,6 +4,7 @@ import clientRoutes from './modules/client/client.route.js';
 import userRoutes from './modules/user/user.route.js';
 import authRoutes from './modules/auth/auth.route.js';
 import dataRoutes from './modules/dashboard/data.route.js';
+import inquiryRoutes from './modules/inquiry/inquiry.route.js';
 import sequelize from './config/db.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -29,6 +30,20 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth' , authRoutes);
 app.use('/api/' , dataRoutes ); // csv upload 
+app.use('/api/inquiry', inquiryRoutes);
+
+
+// import { calendar, calendarId } from "./config/calender.js";
+
+// async function testCalendar() {
+//   const res = await calendar.events.list({
+//     calendarId,
+//     maxResults: 5,
+//   });
+//   console.log(res);
+// }
+
+// testCalendar();
 
 
 // Start server after DB connection

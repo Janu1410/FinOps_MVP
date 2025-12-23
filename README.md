@@ -1,6 +1,6 @@
-# FinOps MVP
+# K&co FinOps Platform
 
-A full-stack FinOps analytics application for processing cloud billing data.
+A full-stack FinOps analytics application for processing cloud billing data and providing cost intelligence insights.
 
 ## Setup Instructions
 

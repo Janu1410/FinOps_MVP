@@ -2,9 +2,9 @@ import * as userService from "../user/user.service.js";
 import * as clientService from "../client/client.service.js";
 import { isValidEmail } from "../../utils/emailValidation.js";
 import bcrypt from "bcrypt";
-import { generateJWT } from "../../utils/generateJWT.js";
+import { generateJWT } from "../../utils/jwt.js";
 import { generateVerificationOTP } from "../../utils/generateVerificationOTP.js";
-import { sendVerificationEmail } from "../../utils/sendVerificationEmail.js";
+import { sendVerificationEmail } from "../../utils/sendEmail.js";
 
 export const signUp = async (req, res) => {
   try {
@@ -138,7 +138,8 @@ export const signIn = async (req, res) => {
       });
     }
     /* 5. Generate JWT */
-    const token = generateJWT(user.id, user.role);
+    const payload = { id: user.id, role: user.role };
+    const token = generateJWT(payload);
 
     /* 6. Set cookie */
     res.cookie("token", token, {
