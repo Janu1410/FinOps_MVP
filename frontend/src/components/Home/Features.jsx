@@ -1,22 +1,18 @@
-import React from 'react';
-import { Clock, Activity, ArrowRight, MoreHorizontal, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { Clock, Activity, ArrowRight, MoreHorizontal, CheckCircle2, X, FileText, Zap, Target } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Features = () => {
   
-  // Stagger Animation for the whole section
+  // Animation Variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1
-      }
+      transition: { staggerChildren: 0.2, delayChildren: 0.1 }
     }
   };
 
-  // Upward Fade for individual items
   const itemVariants = {
     hidden: { y: 30, opacity: 0 },
     visible: { 
@@ -26,10 +22,23 @@ const Features = () => {
     }
   };
 
+  // --- DETAILED CONTENT DATA ---
+  const snapshotDetails = {
+    process: ["Data Ingestion (Read-Only Access)", "7-Day Cost Analysis", "Architectural Review"],
+    deliverables: ["Executive Summary PDF", "Itemized Savings Roadmap", "Immediate Action List"],
+    idealFor: "Startups or Scale-ups needing a quick audit before a fundraise or budget cycle."
+  };
+
+  const continuousDetails = {
+    process: ["Real-time Cloud Integration", "Automated Waste Detection", "Bi-Weekly FinOps Standups"],
+    deliverables: ["Live Custom Dashboard", "Anomaly Alerting System", "Reserved Instance Management"],
+    idealFor: "Enterprises with >$20k/mo spend looking to operationalize cost culture."
+  };
+
   return (
     <section className="py-24 bg-[#0f0f11] relative overflow-hidden" id="services">
       
-      {/* Background Decor - Animated Pulse */}
+      {/* Background Decor */}
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
@@ -61,8 +70,8 @@ const Features = () => {
           </motion.p>
         </div>
 
-        {/* --- SERVICE CARDS (Interactive) --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        {/* --- SERVICE CARDS --- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             {/* Card 1: Snapshot */}
             <ServiceCard 
@@ -73,6 +82,7 @@ const Features = () => {
                 tags={['Quick Start', 'Fixed Cost']}
                 features={['Uses 30–90 days of billing data', 'Identifies idle resources', 'Delivers savings plan']}
                 variants={itemVariants}
+                details={snapshotDetails} // Pass details here
             />
 
             {/* Card 2: Continuous */}
@@ -84,51 +94,40 @@ const Features = () => {
                 tags={['Ongoing', 'Monitoring']}
                 features={['Real-time data ingestion', 'Continuous waste detection', 'Weekly executive insights']}
                 variants={itemVariants}
+                details={continuousDetails} // Pass details here
             />
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div 
-            variants={itemVariants}
-            whileHover={{ scale: 1.01 }}
-            className="w-full bg-[#0a0a0c] border border-white/10 rounded-2xl p-8 text-center relative overflow-hidden group shadow-2xl"
-        >
-            {/* Moving Gradient Background */}
-            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(139,47,201,0.05)_50%,transparent_75%,transparent_100%)] bg-[size:250%_250%] pointer-events-none animate-gradient-slow group-hover:animate-gradient-fast"></div>
-            
-            <h4 className="text-xl font-bold text-white mb-2 relative z-10">Not Sure Which Model Fits?</h4>
-            <p className="text-gray-400 text-sm mb-5 relative z-10">Most companies start with a Snapshot to identify quick wins.</p>
-            
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 bg-[#8B2FC9] hover:bg-[#7a25b3] text-white font-bold rounded-lg transition-all shadow-lg shadow-purple-900/30 relative z-10 text-sm"
-            >
-              Book a Free Consultation
-            </motion.button>
-        </motion.div>
       </motion.div>
     </section>
   );
 };
 
-const ServiceCard = ({ icon: Icon, title, desc, color, tags, features, variants }) => {
-    // Dynamic Colors based on props
+const ServiceCard = ({ icon: Icon, title, desc, color, tags, features, variants, details }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Dynamic Colors
     const isPurple = color === 'purple';
     const accentColor = isPurple ? 'text-[#8B2FC9]' : 'text-blue-400';
     const bgClass = isPurple ? 'bg-[#8B2FC9]/10' : 'bg-blue-500/10';
     const borderClass = isPurple ? 'border-[#8B2FC9]/20' : 'border-blue-500/20';
     const hoverBorder = isPurple ? 'group-hover:border-[#8B2FC9]/50' : 'group-hover:border-blue-500/50';
+    const btnBg = isPurple ? 'hover:bg-[#8B2FC9]' : 'hover:bg-blue-500';
 
     return (
         <motion.div 
             variants={variants}
-            whileHover={{ y: -8 }}
-            className={`bg-[#121214] border border-white/10 rounded-3xl p-8 ${hoverBorder} transition-colors duration-300 flex flex-col h-full group relative overflow-hidden shadow-lg hover:shadow-xl`}
+            // Only hover effect if not open
+            whileHover={!isOpen ? { y: -8 } : {}}
+            className={`
+                bg-[#121214] border border-white/10 rounded-3xl p-8 
+                ${hoverBorder} transition-all duration-300 flex flex-col h-[520px] group relative overflow-hidden shadow-lg hover:shadow-xl
+            `}
         >
-            {/* Subtle Grid Background inside card */}
+            {/* Subtle Grid Background */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
+            {/* MAIN CARD CONTENT */}
             <div className="relative z-10 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
                     <div className={`w-14 h-14 rounded-2xl ${bgClass} flex items-center justify-center border ${borderClass} group-hover:scale-110 transition-transform duration-300`}>
@@ -155,10 +154,92 @@ const ServiceCard = ({ icon: Icon, title, desc, color, tags, features, variants 
                     ))}
                 </div>
 
-                <button className={`w-full py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 group/btn hover:${bgClass} hover:${borderClass} transition-all`}>
+                <button 
+                    onClick={() => setIsOpen(true)}
+                    className={`w-full py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 group/btn ${btnBg} hover:border-transparent transition-all`}
+                >
                     Learn More <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
             </div>
+
+            {/* --- SLIDE UP DETAIL VIEW --- */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div 
+                        initial={{ y: "100%" }}
+                        animate={{ y: 0 }}
+                        exit={{ y: "100%" }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        className="absolute inset-0 bg-[#1A1B1E] z-20 p-8 flex flex-col border-t-4"
+                        style={{ borderColor: isPurple ? '#8B2FC9' : '#3B82F6' }}
+                    >
+                        {/* Detail Header */}
+                        <div className="flex justify-between items-center mb-6">
+                            <h4 className="text-white font-bold text-lg flex items-center gap-2">
+                                <FileText size={18} className={accentColor} /> Engagement Details
+                            </h4>
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+                                className="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Detail Content */}
+                        <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar">
+                            
+                            {/* Process Section */}
+                            <div>
+                                <h5 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <Activity size={12} /> The Process
+                                </h5>
+                                <ul className="space-y-2">
+                                    {details.process.map((step, i) => (
+                                        <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                                            <span className={`mt-1.5 w-1.5 h-1.5 rounded-full ${isPurple ? 'bg-purple-500' : 'bg-blue-500'}`} />
+                                            {step}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            {/* Deliverables Section */}
+                            <div>
+                                <h5 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                    <Zap size={12} /> Deliverables
+                                </h5>
+                                <ul className="space-y-2">
+                                    {details.deliverables.map((item, i) => (
+                                        <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                                            <span className={`mt-1.5 w-1.5 h-1.5 rounded-full ${isPurple ? 'bg-purple-500' : 'bg-blue-500'}`} />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            {/* Ideal For Section */}
+                            <div className={`p-4 rounded-xl border ${borderClass} ${bgClass}`}>
+                                <h5 className={`text-xs font-bold ${accentColor} uppercase tracking-wider mb-1 flex items-center gap-2`}>
+                                    <Target size={12} /> Ideal For
+                                </h5>
+                                <p className="text-xs text-gray-300 leading-relaxed">
+                                    {details.idealFor}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Close Action */}
+                        <button 
+                            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+                            className="mt-auto pt-4 w-full text-center text-xs text-gray-500 hover:text-white font-bold uppercase tracking-wider transition-colors border-t border-white/5"
+                        >
+                            Close View
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     )
 }

@@ -11,8 +11,10 @@ import Pricing from './components/Home/Pricing';
 import InquirySection from './components/Home/InquirySection';
 import Footer from './components/Home/Footer';
 
+// --- NEW IMPORT HERE ---
+import HowItWorks from './components/Home/HowItWorks';
+
 // Dashboard Components
-// NOTE: DashboardPage handles the internal routing for data-explorer, cost-analysis, etc.
 import Dashboard from './components/Dashboard/DashboardPage';
 import CSVUpload from './components/CSVUpload';
 
@@ -27,11 +29,12 @@ const Home = () => (
   <div className="min-h-screen bg-[#0f0f11] font-sans overflow-x-hidden">
     <Navbar /> 
     <main>
-      <Hero />
+      <Hero />    
       <About />
       <FinOpsSection />
       <Features />
       <Pricing />
+      <HowItWorks />
       <InquirySection />
     </main>
     <Footer />
@@ -45,22 +48,21 @@ function App() {
         {/* Public Home Route */}
         <Route path="/" element={<Home />} />
 
+        {/* --- ADD THIS ROUTE TO FIX THE BLANK PAGE --- */}
+        <Route path="/how-it-works" element={<HowItWorks />} />
+
         {/* Auth Routes */}
         <Route path="/sign-in/*" element={<SignInPage />} />
         <Route path="/sign-up/*" element={<SignUpPage />} />
 
-        {/* CRITICAL FIX: 
-          We use /dashboard/* to capture ALL sub-routes (like /dashboard/data-explorer).
-          This ensures the Dashboard layout (Sidebar + Header) always loads first.
-        */}
+        {/* Dashboard Route */}
         <Route path="/dashboard/*" element={<Dashboard />} />
-
-        {/* ❌ REMOVED THE SEPARATE /dashboard/data-explorer ROUTE 
-          That route was bypassing the Dashboard layout, causing the black screen.
-        */}
 
         <Route path="/upload" element={<CSVUpload />} />
         <Route path="/verify-email/:email" element={<VerifyEmailPage />} />
+
+        {/* Catch-all Route (Optional but recommended) */}
+        <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
     </Router>

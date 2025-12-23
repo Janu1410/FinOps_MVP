@@ -2,15 +2,16 @@
 import React, { useState, useEffect } from "react";
 import { 
   ArrowRight, 
-  Terminal, 
   Sparkles, 
   Clock, 
   Calendar, 
   Zap,
-  CheckCircle2,
   Target,
   PieChart,
-  DollarSign
+  DollarSign,
+  CheckCircle2,
+  FileSpreadsheet,
+  Lock
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -79,71 +80,75 @@ const Hero = ({ onOpenAuth }) => {
           animate="visible" 
           className="text-left relative"
         >
+          {/* UPDATED TAG: Focused on the Tool aspect */}
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 bg-[#2a2a30]/50 border border-white/10 rounded-full px-3 py-1 mb-6 backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5 text-[#a02ff1]" />
             <span className="text-[11px] font-bold tracking-widest text-[#d4a6f9] uppercase">
-              AI-Powered Cloud FinOps
+              Instant Cloud FinOps
             </span>
           </motion.div>
 
+          {/* UPDATED HEADLINE: "Turn Billing Data into Pure Profit" */}
           <div className="mb-6">
             <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1] mb-2">
-              CUT CLOUD <br /> COSTS
+              TURN BILLING <br /> DATA
             </motion.h1>
             <motion.div variants={itemVariants} className="relative inline-block">
               <span className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#a02ff1] via-[#c06eff] to-white animate-gradient bg-300%">
-                10-30% IN 90 DAYS
+                INTO PURE SAVING
               </span>
             </motion.div>
           </div>
 
+          {/* UPDATED DESCRIPTION: Aligns with Upload CSV flow */}
           <motion.p variants={itemVariants} className="text-lg text-gray-400 max-w-lg leading-relaxed font-light mb-8">
-            Master your unit economics. We align your infrastructure spend with business value to eliminate waste and forecast with precision.
+            Stop guessing where your budget goes. <strong>Upload your billing file</strong> to instantly visualize waste, spot anomalies, and find savings—securely and for free.
           </motion.p>
 
-          {/* Feature Tags */}
+          {/* Feature Tags (Updated for Instant/Secure nature) */}
           <motion.div variants={itemVariants} className="flex flex-wrap gap-3 mb-10">
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1b26] border border-blue-500/30 text-blue-200 text-sm font-medium">
-              <Clock size={16} className="text-blue-400" /> <span>3-4 Wk Audit</span>
+              <Clock size={16} className="text-blue-400" /> <span>Instant Audit</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1b26] border border-[#a02ff1]/30 text-purple-200 text-sm font-medium">
-              <Calendar size={16} className="text-[#a02ff1]" /> <span>90 Day Plan</span>
+              <FileSpreadsheet size={16} className="text-[#a02ff1]" /> <span>CSV Upload</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1b26] border border-green-500/30 text-green-200 text-sm font-medium">
-              <Zap size={16} className="text-green-400" /> <span>Weekly Rhythm</span>
+              <Lock size={16} className="text-green-400" /> <span>Secure & Private</span>
             </div>
           </motion.div>
 
-          {/* Buttons */}
+          {/* Buttons with ANIMATION */}
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4">
             
             <Link to="/sign-up" className="w-full sm:w-auto">
               <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(160, 47, 241, 0.5)" }}
+                // --- THIS IS THE ANIMATION PART ---
+                animate={{ 
+                  boxShadow: ["0 0 0px rgba(160, 47, 241, 0)", "0 0 30px rgba(160, 47, 241, 0.5)", "0 0 0px rgba(160, 47, 241, 0)"],
+                  scale: [1, 1.02, 1]
+                }}
+                transition={{ 
+                  duration: 2, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                // ----------------------------------
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="w-full relative px-8 py-4 rounded-xl font-bold text-white overflow-hidden bg-[#a02ff1] transition-all"
               >
                 <div className="flex items-center justify-center gap-2">
-                  <span>Start Free Audit</span>
+                  <span>Get Started</span>
                   <ArrowRight size={18} />
                 </div>
               </motion.button>
             </Link>
 
-            <a href="#about" className="w-full sm:w-auto">
-              <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.05)" }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full px-6 py-4 border border-white/20 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2"
-              >
-                <Terminal size={18} className="text-gray-400" />
-                <span>How it Works</span>
-              </motion.button>
-            </a>
           </motion.div>
         </motion.div>
 
-        {/* RIGHT COLUMN (Dashboard) */}
+        {/* RIGHT COLUMN (Dashboard) - EXACTLY AS REQUESTED */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -157,15 +162,15 @@ const Hero = ({ onOpenAuth }) => {
               boxShadow: `0 30px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)`,
             }}
           >
-             {/* Header */}
-             <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02] rounded-t-[24px]">
-               <div className="flex gap-2">
-                 <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
-                 <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
-                 <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
-               </div>
-               <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">FinOps OS v1.4</div>
-            </div>
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02] rounded-t-[24px]">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+                </div>
+                <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">FinOps OS v1.4</div>
+             </div>
 
             {/* Dashboard Body */}
             <div className="p-6 flex flex-col gap-6 relative overflow-hidden">
@@ -195,10 +200,10 @@ const Hero = ({ onOpenAuth }) => {
                   className="relative z-20 self-center"
                 >
                   <div className="px-4 py-2 rounded-full bg-[#151518] border border-[#a02ff1]/50 shadow-[0_0_15px_rgba(160,47,241,0.3)] flex items-center gap-3">
-                     <Target size={16} className="text-[#a02ff1]" />
-                     <span className="text-sm font-bold text-white">Efficiency 94%</span>
-                     <div className="px-1.5 py-0.5 bg-[#a02ff1] text-white text-[10px] font-bold rounded">HIGH</div>
-                  </div>
+                      <Target size={16} className="text-[#a02ff1]" />
+                      <span className="text-sm font-bold text-white">Efficiency 94%</span>
+                      <div className="px-1.5 py-0.5 bg-[#a02ff1] text-white text-[10px] font-bold rounded">HIGH</div>
+                   </div>
                 </motion.div>
 
                {/* Metric Card 2 (Waste Eliminated - UPDATED TO GREEN) */}
