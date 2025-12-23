@@ -29,7 +29,6 @@
 
 ## Authentication & Security
 
-*   **Clerk** (@clerk/clerk-react v5.59.0): Managed authentication service for user sign-up, sign-in, email verification, and session management
 *   **JWT** (jsonwebtoken v9.0.3): Token-based authentication for API requests
 *   **bcrypt** (v6.0.0): Password hashing and security
 *   **Cookie Parser**: Secure cookie handling for authentication tokens
