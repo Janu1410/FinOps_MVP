@@ -316,13 +316,6 @@ export const sendInquiryAcknowledgementEmail = async (
             margin-bottom: 24px;
         }
         
-        .logo-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #8B2FC9;
-            border-radius: 50%;
-        }
-        
         .title {
             font-size: 28px;
             font-weight: bold;
@@ -330,6 +323,7 @@ export const sendInquiryAcknowledgementEmail = async (
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: white;
         }
         
         /* Content */
@@ -337,6 +331,7 @@ export const sendInquiryAcknowledgementEmail = async (
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
+            color: white;
         }
         
         .greeting span {
@@ -474,7 +469,6 @@ export const sendInquiryAcknowledgementEmail = async (
         <!-- Header -->
         <div class="header">
             <div class="badge">
-                <span class="logo-dot"></span>
                 Inquiry Received
             </div>
             <h1 class="title">Thank You</h1>
@@ -653,6 +647,7 @@ export const sendInquiryEmailToCompany = async (
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: white;
         }
         
         /* Inquiry Info Card */
@@ -877,7 +872,6 @@ export const sendInquiryEmailToCompany = async (
         <!-- Header -->
         <div class="header">
             <div class="badge">
-                <span class="alert-icon"></span>
                 New Inquiry
             </div>
             <h1 class="title">Inquiry Received</h1>
@@ -1059,6 +1053,7 @@ export const sendMeetingConfirmationEmail = async (
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 12px;
+            color: white;
         }
         
         .subtitle {
@@ -1077,6 +1072,7 @@ export const sendMeetingConfirmationEmail = async (
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
+            color: white;
         }
         
         .greeting span {
@@ -1308,7 +1304,6 @@ export const sendMeetingConfirmationEmail = async (
         <!-- Header -->
         <div class="header">
             <div class="success-badge">
-                <span class="success-icon"></span>
                 Inquiry Accepted
             </div>
             <h1 class="title">Meeting Scheduled</h1>
@@ -1487,6 +1482,7 @@ export const sendInquiryRejectionEmail = async (email, name) => {
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 12px;
+            color: white;
         }
         
         .subtitle {
@@ -1505,6 +1501,7 @@ export const sendInquiryRejectionEmail = async (email, name) => {
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
+            color: white;
         }
         
         .greeting span {
@@ -1747,7 +1744,6 @@ export const sendInquiryRejectionEmail = async (email, name) => {
         <!-- Header -->
         <div class="header">
             <div class="rejection-badge">
-                <span class="rejection-icon"></span>
                 Inquiry Update
             </div>
             <h1 class="title">Thank You for Your Interest</h1>
