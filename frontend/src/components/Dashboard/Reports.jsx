@@ -96,7 +96,54 @@ const Reports = ({ data }) => {
   const generatePDF = (reportType) => {
     // In a real implementation, this would call a backend API to generate PDF
     // For now, we'll show a message
+    
     alert(`Generating ${reportType} PDF report...\n\nIn production, this would:\n1. Call backend API\n2. Generate PDF with report data\n3. Download the file`);
+  };
+
+  const downloadReport = async () => {
+    try {
+       const payload = {
+    period: reportData.period,
+    totalSpend: reportData.totalSpend.toFixed(2),
+    topServices: reportData.topServices,
+    topRegions: reportData.topRegions,
+    optimizationData: reportData.optimizationData,
+    topServicePercent: reportData.topServicePercent,
+    taggedPercent: reportData.taggedPercent,
+    prodPercent: reportData.prodPercent
+  };
+
+      const response = await fetch(
+        "http://localhost:5000/api/download-cloud-report",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to download report");
+      }
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "Cloud_Cost_Summary_Report.pdf";
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Unable to download report. Please try again.");
+    }
   };
 
   const formatPeriod = (dateString) => {
@@ -289,7 +336,7 @@ const Reports = ({ data }) => {
                 </button>
               ) : (
                 <button
-                  onClick={() => generatePDF(report.title)}
+                  onClick={() => downloadReport()}
                   className="px-6 py-2 bg-[#a02ff1] hover:bg-[#8e25d9] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                 >
                   <Download size={16} />

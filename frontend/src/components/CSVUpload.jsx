@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Upload, CheckCircle2, Loader2, ArrowRight, FileText, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CSVUpload = () => {
+
   const [uploadStatus, setUploadStatus] = useState('idle'); // idle, processing, success, error
   const [fileDetails, setFileDetails] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -82,6 +83,8 @@ const CSVUpload = () => {
   const handleChange = (e) => {
     handleFileUpload(e.target.files[0]);
   };
+
+
 
   return (
     <div className="min-h-screen bg-[#0f0f11] flex items-center justify-center px-6 py-12 font-sans relative overflow-hidden">

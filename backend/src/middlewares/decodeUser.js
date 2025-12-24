@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 export const decodeUser = (req, res, next) => {
 
   const token = req.cookies.kandco_token ;
-  console.log("Token from cookies:", token);
     if (!token) {
         return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
