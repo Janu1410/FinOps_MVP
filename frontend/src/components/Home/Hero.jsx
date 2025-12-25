@@ -11,11 +11,25 @@ import {
   DollarSign,
   CheckCircle2,
   FileSpreadsheet,
-  Lock
+  Lock,
+  Cloud,
+  TrendingUp,
+  BarChart3,
+  Server,
+  Database,
+  Activity
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import AuthModal from "../Auth/AuthModal";
+
+// Add CSS for grid animation
+const gridPulseStyle = `
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+  }
+`;
 
 const Hero = ({ onOpenAuth, isCTAActivated = false, showAttentionGrabber = false, deactivateCTA = () => {}, showJourney = () => {} }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -85,6 +99,7 @@ const Hero = ({ onOpenAuth, isCTAActivated = false, showAttentionGrabber = false
 
   return (
     <>
+    <style>{gridPulseStyle}</style>
     <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} initialView="signup" />
     <section
       id="hero"
@@ -336,105 +351,596 @@ const Hero = ({ onOpenAuth, isCTAActivated = false, showAttentionGrabber = false
           </motion.div>
         </motion.div>
 
-        {/* RIGHT COLUMN (Dashboard) - EXACTLY AS REQUESTED */}
+        {/* RIGHT COLUMN - Animated K&Co Logo */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="relative hidden lg:block h-[600px] perspective-1000"
+          className="relative hidden lg:block h-[700px] perspective-1000"
         >
           <div
-            className="absolute top-1/2 left-1/2 w-[420px] bg-[#0f0f11] border border-white/10 rounded-[24px] shadow-2xl flex flex-col transition-transform duration-100 ease-out"
+            className="absolute top-1/2 left-1/2 w-[520px] h-[600px] bg-[#0f0f11] border border-white/10 rounded-[24px] shadow-2xl flex flex-col transition-transform duration-100 ease-out overflow-hidden"
             style={{
               transform: `translate(-50%, -50%) rotateX(${mousePosition.y * -4}deg) rotateY(${mousePosition.x * 4}deg)`,
               boxShadow: `0 30px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)`,
             }}
           >
-              {/* Header */}
-              <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02] rounded-t-[24px]">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02] rounded-t-[24px]">
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+              </div>
+              <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">K&Co FinOps</div>
+            </div>
+
+            {/* Animated Logo Content */}
+            <div className="flex-1 relative overflow-hidden">
+              {/* Futuristic animated background */}
+              <motion.div 
+                animate={{
+                  background: [
+                    'linear-gradient(135deg, rgba(160,47,241,0.08) 0%, rgba(147,51,234,0.08) 100%)',
+                    'linear-gradient(135deg, rgba(147,51,234,0.12) 0%, rgba(160,47,241,0.12) 100%)',
+                    'linear-gradient(135deg, rgba(160,47,241,0.08) 0%, rgba(147,51,234,0.08) 100%)'
+                  ]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute inset-0"
+              />
+              
+              {/* Holographic grid overlay */}
+              <div className="absolute inset-0 opacity-20">
+                <div 
+                  className="w-full h-full"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(rgba(160,47,241,0.3) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(160,47,241,0.3) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '30px 30px',
+                    animation: 'gridPulse 4s ease-in-out infinite'
+                  }}
+                />
+              </div>
+
+
+
+              {/* Financial data streams */}
+              <div className="absolute inset-0">
+                {/* Horizontal cost trend lines */}
+                {[...Array(5)].map((_, i) => (
+                  <motion.div
+                    key={`cost-${i}`}
+                    className="absolute h-px bg-gradient-to-r from-transparent via-[#10b981] to-transparent opacity-30"
+                    style={{
+                      top: `${25 + i * 15}%`,
+                      left: '10%',
+                      right: '10%',
+                    }}
+                    animate={{
+                      scaleX: [0, 1, 0],
+                      opacity: [0, 0.5, 0],
+                    }}
+                    transition={{
+                      duration: 3.5,
+                      repeat: Infinity,
+                      delay: i * 0.4,
+                      ease: "easeInOut"
+                    }}
+                  />
+                ))}
+
+                {/* Vertical analytics streams */}
+                {[...Array(4)].map((_, i) => (
+                  <motion.div
+                    key={`analytics-${i}`}
+                    className="absolute w-px bg-gradient-to-b from-transparent via-[#3b82f6] to-transparent opacity-25"
+                    style={{
+                      left: `${20 + i * 20}%`,
+                      top: '15%',
+                      bottom: '15%',
+                    }}
+                    animate={{
+                      scaleY: [0, 1, 0],
+                      opacity: [0, 0.4, 0],
+                    }}
+                    transition={{
+                      duration: 4.5,
+                      repeat: Infinity,
+                      delay: i * 0.6,
+                      ease: "easeInOut"
+                    }}
+                  />
+                ))}
+
+                {/* Upward trending bar charts */}
+                {[...Array(8)].map((_, i) => (
+                  <motion.div
+                    key={`bar-${i}`}
+                    className="absolute bg-gradient-to-t from-[#10b981]/20 to-[#10b981]/5 opacity-15"
+                    style={{
+                      left: `${15 + i * 10}%`,
+                      bottom: '20%',
+                      width: '6px',
+                      height: `${20 + Math.sin(i * 0.8) * 15 + 25}px`, // Upward trending heights
+                    }}
+                    animate={{
+                      scaleY: [0, 1],
+                      opacity: [0, 0.3, 0.15],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      delay: i * 0.2,
+                      ease: "easeOut"
+                    }}
+                  />
+                ))}
+
+                {/* Stock market style line graph */}
+                <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300">
+                  <motion.path
+                    d="M50,200 Q100,180 150,160 T250,120 T350,80"
+                    stroke="#10b981"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeDasharray="5,5"
+                    animate={{
+                      pathLength: [0, 1],
+                      opacity: [0, 0.4, 0.1],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  <motion.path
+                    d="M60,220 Q110,200 160,180 T260,140 T360,100"
+                    stroke="#22c55e"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeDasharray="3,3"
+                    animate={{
+                      pathLength: [0, 1],
+                      opacity: [0, 0.3, 0.08],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      delay: 1,
+                      ease: "easeInOut"
+                    }}
+                  />
+                </svg>
+
+                {/* Pie chart segments */}
+                <div className="absolute top-16 right-16 w-12 h-12 opacity-8">
+                  <svg viewBox="0 0 42 42" className="w-full h-full">
+                    <motion.circle
+                      cx="21" cy="21" r="15.915"
+                      fill="transparent"
+                      stroke="#10b981"
+                      strokeWidth="3"
+                      strokeDasharray="60 40"
+                      strokeDashoffset="25"
+                      animate={{
+                        strokeDashoffset: [25, 15, 25],
+                        opacity: [0.1, 0.3, 0.1],
+                      }}
+                      transition={{
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </svg>
                 </div>
-                <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">FinOps OS v1.4</div>
-             </div>
 
-            {/* Dashboard Body */}
-            <div className="p-6 flex flex-col gap-6 relative overflow-hidden">
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+                {/* Cost savings indicators */}
+                {[...Array(3)].map((_, i) => (
+                  <motion.div
+                    key={`savings-${i}`}
+                    className="absolute text-[#10b981] text-xs font-mono opacity-10"
+                    style={{
+                      left: `${25 + i * 25}%`,
+                      top: `${30 + i * 20}%`,
+                    }}
+                    animate={{
+                      y: [0, -10, 0],
+                      opacity: [0.05, 0.2, 0.05],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      delay: i * 1.5,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    +{15 + i * 5}%
+                  </motion.div>
+                ))}
 
-               {/* Metric Card 1 (Unit Cost - Blue) */}
-               <div className="relative z-10 bg-[#1a1b20]/80 backdrop-blur-sm p-4 rounded-xl border border-white/5">
-                 <div className="flex justify-between items-center mb-1">
-                   <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                     <PieChart size={14} /> Unit Cost / Transaction
-                   </div>
-                   <div className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20">LIVE</div>
-                 </div>
-                 <div className="text-3xl font-bold text-white mb-2">$0.0042</div>
-                 <div className="text-xs text-gray-500">vs $0.0058 (Last Month)</div>
-                 <div className="flex gap-1 mt-3 items-end h-8">
-                    {[60, 55, 50, 48, 45, 42, 40, 38].map((h, i) => (
-                      <div key={i} style={{height: `${h}%`}} className="flex-1 bg-blue-500/20 rounded-sm"></div>
-                    ))}
-                 </div>
-               </div>
+                {/* Data points */}
+                {[...Array(6)].map((_, i) => (
+                  <motion.div
+                    key={`point-${i}`}
+                    className="absolute w-1 h-1 bg-[#10b981] rounded-full opacity-15"
+                    style={{
+                      left: `${20 + i * 12}%`,
+                      top: `${40 + Math.sin(i) * 20}%`,
+                    }}
+                    animate={{
+                      scale: [0.5, 1.5, 0.5],
+                      opacity: [0.1, 0.4, 0.1],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      delay: i * 0.4,
+                      ease: "easeInOut"
+                    }}
+                  />
+                ))}
+              </div>
 
-                {/* Floating Badge (Purple) */}
-                <motion.div 
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative z-20 self-center"
+              {/* Cloud Provider Icons in Corners */}
+              <div className="absolute top-4 left-4">
+                <motion.div
+                  animate={{
+                    opacity: [0.4, 0.8, 0.4],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="w-16 h-16 p-1 bg-white/90 rounded-lg border border-[#ff9900]/30 flex items-center justify-center"
                 >
-                  <div className="px-4 py-2 rounded-full bg-[#151518] border border-[#a02ff1]/50 shadow-[0_0_15px_rgba(160,47,241,0.3)] flex items-center gap-3">
-                      <Target size={16} className="text-[#a02ff1]" />
-                      <span className="text-sm font-bold text-white">Efficiency 94%</span>
-                      <div className="px-1.5 py-0.5 bg-[#a02ff1] text-white text-[10px] font-bold rounded">HIGH</div>
-                   </div>
+                  <img src="/aws.svg" alt="AWS" className="w-full h-full object-contain" />
                 </motion.div>
+              </div>
+              <div className="absolute top-4 right-4">
+                <motion.div
+                  animate={{
+                    opacity: [0.4, 0.8, 0.4],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: 0.5,
+                    ease: "easeInOut"
+                  }}
+                  className="w-16 h-16 p-1 bg-white/90 rounded-lg border border-[#0078d4]/30 flex items-center justify-center"
+                >
+                  <img src="/azure.svg" alt="Azure" className="w-full h-full object-contain" />
+                </motion.div>
+              </div>
+              <div className="absolute bottom-4 left-4">
+                <motion.div
+                  animate={{
+                    opacity: [0.4, 0.8, 0.4],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: 1,
+                    ease: "easeInOut"
+                  }}
+                  className="w-16 h-16 p-1 bg-white/90 rounded-lg border border-[#4285f4]/30 flex items-center justify-center"
+                >
+                  <img src="/gcp.svg" alt="Google Cloud" className="w-full h-full object-contain" />
+                </motion.div>
+              </div>
+              <div className="absolute bottom-4 right-4">
+                <motion.div
+                  animate={{
+                    opacity: [0.4, 0.8, 0.4],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: 1.5,
+                    ease: "easeInOut"
+                  }}
+                  className="w-16 h-16 p-1 bg-white/90 rounded-lg border border-[#f80000]/30 flex items-center justify-center"
+                >
+                  <img src="/oracle.svg" alt="Oracle" className="w-full h-full object-contain" />
+                </motion.div>
+              </div>
 
-               {/* Metric Card 2 (Waste Eliminated - UPDATED TO GREEN) */}
-               <div className="relative z-10 bg-[#1a1b20]/80 backdrop-blur-sm p-4 rounded-xl border border-white/5 mt-auto">
-                 <div className="flex justify-between items-center mb-1">
-                   <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold uppercase tracking-wider">
-                     <DollarSign size={14} className="text-green-400" /> {/* Icon is now Green */}
-                     Waste Eliminated
-                   </div>
-                 </div>
-                 <div className="flex items-end justify-between">
-                    <div>
-                        {/* Text is now Green-tinted for emphasis */}
-                        <div className="text-3xl font-bold text-white">${counter.toLocaleString()}</div>
-                        <div className="text-xs text-gray-500">Annualized Savings</div>
+              {/* Main logo container */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
+                  className="relative"
+                >
+                  {/* Holographic glow ring */}
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.15, 1],
+                      opacity: [0.2, 0.5, 0.2],
+                      rotate: [0, 360],
+                    }}
+                    transition={{
+                      scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                      opacity: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                      rotate: { duration: 20, repeat: Infinity, ease: "linear" }
+                    }}
+                    className="absolute inset-0 rounded-full border-2 border-dashed border-[#a02ff1] opacity-30"
+                    style={{ width: '200px', height: '200px', left: '-84px', top: '-84px' }}
+                  />
+
+                  {/* Inner energy ring */}
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.08, 1],
+                      opacity: [0.4, 0.7, 0.4],
+                      rotate: [360, 0],
+                    }}
+                    transition={{
+                      scale: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+                      opacity: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+                      rotate: { duration: 15, repeat: Infinity, ease: "linear" }
+                    }}
+                    className="absolute inset-0 rounded-full border border-[#9333EA] opacity-40"
+                    style={{ width: '150px', height: '150px', left: '-59px', top: '-59px' }}
+                  />
+
+                  {/* Logo with futuristic effects */}
+                  <motion.div
+                    animate={{
+                      rotateY: [0, 5, 0, -5, 0],
+                    }}
+                    transition={{
+                      duration: 8,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="relative w-32 h-32 flex items-center justify-center"
+                  >
+                    {/* Scanning line effect */}
+                    <motion.div
+                      animate={{
+                        y: [-50, 50],
+                        opacity: [0, 1, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatDelay: 3
+                      }}
+                      className="absolute inset-0 h-1 bg-gradient-to-r from-transparent via-[#a02ff1] to-transparent pointer-events-none"
+                      style={{ 
+                        boxShadow: '0 0 20px rgba(160, 47, 241, 0.8)',
+                        filter: 'blur(1px)'
+                      }}
+                    />
+
+                    {/* Logo image with holographic effect */}
+                    <motion.img
+                      src="/k&coicon.svg"
+                      alt="K&Co Logo"
+                      className="w-full h-full object-contain relative z-10"
+                      animate={{
+                        filter: [
+                          'drop-shadow(0 0 20px rgba(160, 47, 241, 0.5)) drop-shadow(0 0 40px rgba(147, 51, 234, 0.3)) brightness(1)',
+                          'drop-shadow(0 0 30px rgba(160, 47, 241, 0.8)) drop-shadow(0 0 60px rgba(147, 51, 234, 0.5)) brightness(1.3)',
+                          'drop-shadow(0 0 20px rgba(160, 47, 241, 0.5)) drop-shadow(0 0 40px rgba(147, 51, 234, 0.3)) brightness(1)'
+                        ]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    
+                    {/* Logo shine effect overlay */}
+                    <motion.div
+                      className="absolute inset-0 pointer-events-none z-20"
+                      style={{
+                        background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%)',
+                        backgroundSize: '200% 200%',
+                        mixBlendMode: 'overlay'
+                      }}
+                      animate={{
+                        backgroundPosition: ['-200% -200%', '200% 200%']
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatDelay: 3
+                      }}
+                    />
+                  </motion.div>
+
+                  {/* Orbiting data nodes */}
+                  {[0, 1, 2, 3].map((index) => (
+                    <motion.div
+                      key={index}
+                      animate={{
+                        rotate: 360,
+                      }}
+                      transition={{
+                        duration: 12 + index * 2,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        width: '220px',
+                        height: '220px',
+                        left: '-66px',
+                        top: '-66px'
+                      }}
+                    >
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.3, 1],
+                          opacity: [0.6, 1, 0.6],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: index * 0.5,
+                          ease: "easeInOut"
+                        }}
+                        className="absolute w-2 h-2 bg-[#a02ff1] rounded-full"
+                        style={{
+                          top: `${10 + index * 20}px`,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          boxShadow: '0 0 15px rgba(160, 47, 241, 0.8)',
+                          border: '1px solid rgba(160, 47, 241, 0.5)'
+                        }}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+
+              {/* Company branding with animated icons */}
+              <div className="absolute bottom-6 left-0 right-0 text-center">
+                <motion.div
+                  className="text-2xl font-bold text-white mb-4 font-mono tracking-wider"
+                  animate={{
+                    opacity: [0.7, 1, 0.7],
+                    textShadow: [
+                      '0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(160,47,241,0.6), 0 0 30px rgba(160,47,241,0.4)',
+                      '0 0 20px rgba(255,255,255,0.9), 0 0 30px rgba(160,47,241,0.8), 0 0 40px rgba(160,47,241,0.6)',
+                      '0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(160,47,241,0.6), 0 0 30px rgba(160,47,241,0.4)'
+                    ]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  K&Co.
+                </motion.div>
+                
+                {/* Three business pillars represented by animated icons */}
+                <div className="flex items-center justify-center gap-6 mb-3">
+                  {/* Cloud Technologies */}
+                  <motion.div 
+                    animate={{
+                      y: [0, -4, 0],
+                      opacity: [0.6, 1, 0.6],
+                      scale: [1, 1.1, 1],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div className="p-3 bg-[#10b981]/10 rounded-lg border border-[#10b981]/30">
+                      <Cloud size={18} className="text-[#10b981]" />
                     </div>
-                    {/* Graph Bars are now GREEN */}
-                    <div className="flex gap-1 items-end h-10">
-                        {[20, 35, 45, 50, 65, 75, 85, 100].map((h, i) => (
-                        <motion.div 
-                            key={i}
-                            initial={{ height: 0 }}
-                            animate={{ height: `${h}%` }}
-                            transition={{ duration: 1, delay: i * 0.1 }}
-                            className="w-1.5 bg-green-500 rounded-t-sm shadow-[0_0_10px_rgba(34,197,94,0.3)]" 
-                        />
-                        ))}
+                    <div className="w-1 h-1 bg-[#10b981] rounded-full animate-pulse"></div>
+                  </motion.div>
+                  
+                  {/* Financial Operations */}
+                  <motion.div 
+                    animate={{
+                      y: [0, -6, 0],
+                      opacity: [0.6, 1, 0.6],
+                      scale: [1, 1.15, 1],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      delay: 0.8,
+                      ease: "easeInOut"
+                    }}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div className="p-3 bg-[#f59e0b]/10 rounded-lg border border-[#f59e0b]/30">
+                      <DollarSign size={18} className="text-[#f59e0b]" />
                     </div>
-                 </div>
-               </div>
+                    <div className="w-1 h-1 bg-[#f59e0b] rounded-full animate-pulse"></div>
+                  </motion.div>
+                  
+                  {/* Analytics Engine */}
+                  <motion.div 
+                    animate={{
+                      y: [0, -5, 0],
+                      opacity: [0.6, 1, 0.6],
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      delay: 1.6,
+                      ease: "easeInOut"
+                    }}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div className="p-3 bg-[#a02ff1]/10 rounded-lg border border-[#a02ff1]/30">
+                      <BarChart3 size={18} className="text-[#a02ff1]" />
+                    </div>
+                    <div className="w-1 h-1 bg-[#a02ff1] rounded-full animate-pulse"></div>
+                  </motion.div>
+                </div>
+                
+                <motion.div 
+                  animate={{
+                    opacity: [0.4, 0.8, 0.4],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="text-xs text-gray-500 font-mono flex items-center justify-center gap-2"
+                >
+                  <Activity size={10} className="text-[#a02ff1] animate-pulse" />
+                  SYSTEM.ACTIVE
+                  <Activity size={10} className="text-[#a02ff1] animate-pulse" />
+                </motion.div>
+              </div>
 
-               {/* Success Pill */}
-               <motion.div 
-                 initial={{ opacity: 0, scale: 0.8 }}
-                 animate={{ opacity: 1, scale: 1 }}
-                 transition={{ delay: 1.5 }}
-                 className="absolute -right-12 top-20 bg-[#0f0f11] border border-green-500/30 p-3 rounded-xl shadow-xl z-30 flex flex-col items-center gap-1"
-               >
-                 <CheckCircle2 size={20} className="text-green-400" />
-                 <span className="text-[10px] font-bold text-white">Budget</span>
-                 <span className="text-xs font-mono text-green-400">UNDER</span>
-               </motion.div>
-
+              {/* Futuristic corner accents with circuit patterns */}
+              <div className="absolute top-0 right-0 w-16 h-16">
+                <motion.div
+                  animate={{
+                    opacity: [0.2, 0.6, 0.2],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="w-full h-full bg-gradient-to-bl from-[#a02ff1]/20 to-transparent rounded-bl-full border-l border-b border-[#a02ff1]/30"
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 w-12 h-12">
+                <motion.div
+                  animate={{
+                    opacity: [0.2, 0.6, 0.2],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: 1.5,
+                    ease: "easeInOut"
+                  }}
+                  className="w-full h-full bg-gradient-to-tr from-[#9333EA]/20 to-transparent rounded-tr-full border-r border-t border-[#9333EA]/30"
+                />
+              </div>
             </div>
           </div>
         </motion.div>

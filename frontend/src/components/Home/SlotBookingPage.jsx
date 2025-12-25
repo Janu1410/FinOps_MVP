@@ -5,6 +5,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, MapPin, ArrowRight, CheckCircle2, ChevronLeft, User, Mail } from "lucide-react";
+import toast from "react-hot-toast";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function SlotBookingPage() {
   const navigate = useNavigate();
@@ -72,6 +75,8 @@ export default function SlotBookingPage() {
         const res = await axios.get(
           `http://localhost:5000/api/inquiry/slots/by-date?date=${formattedDate}`
         );
+
+        console.log("Fetched slots:", res.data.slots);
         setSlots(res.data.slots || []);
       } catch (err) {
         console.error("Failed to fetch slots", err);
@@ -94,7 +99,7 @@ export default function SlotBookingPage() {
 
   async function handleSubmit() {
     if (!selectedSlot) {
-      alert("Please select a slot");
+      toast.error("Please select a slot");
       return;
     }
 
@@ -113,11 +118,11 @@ export default function SlotBookingPage() {
 
     try {
       await axios.post("http://localhost:5000/api/inquiry/submit", payload);
-      alert("Inquiry submitted successfully");
+      toast.success("Inquiry submitted successfully");
       navigate("/");
     } catch (err) {
       console.error("Failed to submit inquiry", err);
-      alert("Failed to submit inquiry");
+      toast.error("Failed to submit inquiry");
     } finally {
       setSubmitting(false);
     }

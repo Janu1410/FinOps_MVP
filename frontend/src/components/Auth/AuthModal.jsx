@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Mail, Lock, User, ArrowRight, Building2, ShieldCheck, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../../store/Authstore.jsx"; // Ensure this path is correct
+import { toast } from "react-hot-toast";
 
 const AuthModal = ({ isOpen, onClose, initialView = "login" }) => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const AuthModal = ({ isOpen, onClose, initialView = "login" }) => {
         setEmailForVerify(loginData.email);
         setView("verify"); // Switch to verify screen
       } else {
-        alert(response.message || "Sign in failed");
+        toast.error(response.message || "Sign in failed");
       }
     }
   };
@@ -70,7 +71,7 @@ const AuthModal = ({ isOpen, onClose, initialView = "login" }) => {
       setEmailForVerify(signupData.email);
       setView("verify"); // Switch to verify screen
     } else {
-      alert(response.message);
+      toast.error(response.message);
     }
   };
 
@@ -78,10 +79,10 @@ const AuthModal = ({ isOpen, onClose, initialView = "login" }) => {
     e.preventDefault();
     const response = await verifyEmail({ email: emailForVerify, otp });
     if (response.success) {
-      alert("Email verified! Please sign in.");
+      toast.success("Email verified! Please sign in.");
       setView("login");
     } else {
-      alert(response.message || "Verification failed");
+      toast.error(response.message || "Verification failed");
     }
   };
 
