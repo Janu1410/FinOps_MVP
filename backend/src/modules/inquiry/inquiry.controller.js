@@ -58,7 +58,7 @@ export const submitInquiry = async (req, res) => {
     await sendInquiryAcknowledgementEmail(
       email,
       name,
-      utcPreferredDateTime,
+      preferred_datetime,
       timezone
     );
 
