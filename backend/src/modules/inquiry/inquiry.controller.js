@@ -7,57 +7,58 @@ import {
 import { generateJWT, verifyJWT } from "../../utils/jwt.js";
 import { Inquiry } from "../../models/index.js";
 import { createInquiry } from "./inquiry.service.js";
-import { scheduleEvent  , getFreeSlots} from "../../utils/calenderSchedular.js";
-
-
+import { scheduleEvent, getFreeSlots } from "../../utils/calenderSchedular.js";
+import { DateTime } from "luxon";
+import { toZonedTime } from "date-fns-tz";
+import { fromZonedTime } from "date-fns-tz";
+const BUSINESS_TZ = "Asia/Kolkata"; // Company timezone
 
 export const submitInquiry = async (req, res) => {
   try {
     const { name, email, message, preferred_datetime, timezone } = req.body;
 
-    if (!preferred_datetime) {
+    if (!preferred_datetime || !timezone) {
       return res.status(400).json({
-        message: "Preferred date & time is required",
+        message: "Preferred date, time, and timezone are required",
       });
     }
 
-    // 1️⃣ Create inquiry
+    // ✅ Convert client local time → UTC
+    const utcPreferredDateTime = fromZonedTime(preferred_datetime, timezone);
+
     const newInquiry = await createInquiry({
       name,
       email,
       message,
-      preferred_datetime,
+      preferred_datetime: utcPreferredDateTime,
       timezone,
     });
 
-    // 2️⃣ Generate ONE-TIME action token
     const actionToken = generateJWT({ inquiryId: newInquiry.id });
+    await newInquiry.update({ action_token: actionToken });
 
-    // 3️⃣ Store token in DB
-    await newInquiry.update({
-      action_token: actionToken,
-    });
-
-    // 4️⃣ Create secure links
     const acceptLink = `${process.env.BACKEND_URL}/api/inquiry/accept/${newInquiry.id}?token=${actionToken}`;
     const rejectLink = `${process.env.BACKEND_URL}/api/inquiry/reject/${newInquiry.id}?token=${actionToken}`;
 
-    // 5️⃣ Send email to company
+    const businessPreferredDateTime = toZonedTime(
+      new Date(utcPreferredDateTime),
+      BUSINESS_TZ
+    );
+
     await sendInquiryEmailToCompany(
       name,
       email,
       message,
-      preferred_datetime,
-      timezone,
+      businessPreferredDateTime,
+      BUSINESS_TZ,
       acceptLink,
       rejectLink
     );
 
-    // 6️⃣ Send acknowledgement to client
     await sendInquiryAcknowledgementEmail(
       email,
       name,
-      preferred_datetime,
+      utcPreferredDateTime,
       timezone
     );
 
@@ -67,7 +68,7 @@ export const submitInquiry = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -76,104 +77,68 @@ export const acceptInquiry = async (req, res) => {
     const { id } = req.params;
     const { token } = req.query;
 
-    if (!token) {
-      return res.status(400).send("Invalid request");
-    }
+    if (!token) return res.status(400).send("Invalid request");
 
-    // 1️⃣ Find inquiry
     const inquiry = await Inquiry.findByPk(id);
+    if (!inquiry) return res.status(404).send("Inquiry not found");
 
-    if (!inquiry) {
-      return res.status(404).send("Inquiry not found");
-    }
-
-    // 2️⃣ Check already processed
     if (inquiry.status !== "PENDING") {
       return res.send("This inquiry has already been processed.");
     }
 
-    // 3️⃣ Validate token
     if (token !== inquiry.action_token) {
       return res.status(403).send("Invalid or expired link.");
     }
 
-    // 4️⃣ (Optional) Verify JWT expiry
     verifyJWT(token);
 
-    // 5️⃣ Create Google Meet (plug here)
-    
+    // ✅ preferred_datetime is UTC from DB
     const event = await scheduleEvent(
       `Meeting with ${inquiry.name}`,
-      inquiry.message, 
-        inquiry.preferred_datetime,
-        inquiry.timezone
+      inquiry.message,
+      inquiry.preferred_datetime,
+      inquiry.timezone
     );
 
     if (!event.success) {
-      return res.status(500).send("Failed to schedule meeting: " + event.message);
+      return res.status(500).send(event.message);
     }
-    const { meetingLink } = event;
 
-    // 6️⃣ Update inquiry
     await inquiry.update({
       status: "ACCEPTED",
-      meet_link: meetingLink,
-      action_token: null, // invalidate token
+      meet_link: event.meetingLink,
+      action_token: null,
     });
 
-    // 7️⃣ Notify client
     await sendMeetingConfirmationEmail(
       inquiry.email,
       inquiry.name,
       inquiry.preferred_datetime,
       inquiry.timezone,
-      meetingLink
+      event.meetingLink
     );
 
-    // 8️⃣ Response (simple HTML)
-
-    return res.send(`
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Inquiry Status</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f8f9fa;
-        color: #333;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      .card {
-        background: #fff;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        text-align: center;
-      }
-      .success {
-        color: #28a745;
-        font-size: 3rem;
-      }
-      .failure {
-        color: #dc3545;
-        font-size: 3rem;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <div class="success">✅</div>
-      <h1>Inquiry Accepted</h1>
-      <p>The meeting has been scheduled and the client has been notified.</p>
-    </div>
-  </body>
-  </html>
-`);
+    return res.send(
+       `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Inquiry Status</title>
+        <style>
+          body { font-family: Arial; background:#f8f9fa; display:flex; justify-content:center; align-items:center; height:100vh; }
+          .card { background:#fff; padding:40px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1); text-align:center; }
+          .success { color:#28a745; font-size:3rem; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <div class="success">✅</div>
+          <h1>Inquiry Accepted</h1>
+          <p>The meeting has been scheduled and the client has been notified.</p>
+        </div>
+      </body>
+      </html>`
+    );
   } catch (error) {
     console.error(error);
     return res.status(500).send("Something went wrong");
@@ -270,8 +235,6 @@ export const rejectInquiry = async (req, res) => {
   }
 };
 
-
-
 /**
  * GET /api/slots/by-date
  * Query:
@@ -280,9 +243,8 @@ export const rejectInquiry = async (req, res) => {
  */
 export async function getSlotsByDate(req, res) {
   try {
-    const { date } = req.query;
+    const { date, userTimezone } = req.query;
     const slotMinutes = Number(req.query.slotMinutes) || 60;
-    const timezone = "Asia/Kolkata";
 
     if (!date) {
       return res.status(400).json({
@@ -291,70 +253,63 @@ export async function getSlotsByDate(req, res) {
       });
     }
 
-    // 1️⃣ Create day range (10:00–18:00)
-    const startOfDay = new Date(`${date}T10:00:00`);
-    const endOfDay = new Date(`${date}T18:00:00`);
+    // 1️⃣ Build business-day window IN BUSINESS TZ
+    let start = DateTime.fromISO(date, { zone: BUSINESS_TZ }).set({
+      hour: 10,
+      minute: 0,
+    });
 
-    // 2️⃣ If selected date is today → start from now
-    const now = new Date();
-    if (startOfDay.toDateString() === now.toDateString()) {
-      const roundedNow = new Date(now);
-      roundedNow.setMinutes(Math.ceil(now.getMinutes() / 30) * 30, 0, 0);
+    let end = DateTime.fromISO(date, { zone: BUSINESS_TZ }).set({
+      hour: 18,
+      minute: 0,
+    });
 
-      if (roundedNow > startOfDay) {
-        startOfDay.setTime(roundedNow.getTime());
-      }
+    // 2️⃣ If today → start from now (BUSINESS TZ)
+    const now = DateTime.now().setZone(BUSINESS_TZ);
+    if (start.hasSame(now, "day") && now > start) {
+      const rounded = now.plus({
+        minutes: 30 - (now.minute % 30),
+      });
+      start = rounded < end ? rounded : end;
     }
 
-    // If day already passed
-    if (startOfDay >= endOfDay) {
-      return res.status(200).json({
+    if (start >= end) {
+      return res.json({
         success: true,
         date,
-        timezone,
+        businessTimezone: BUSINESS_TZ,
         slots: [],
       });
     }
 
-    // 3️⃣ Get free slots
-    const freeSlots = await getFreeSlots(
-      startOfDay.toISOString(),
-      endOfDay.toISOString(),
-      timezone,
-      slotMinutes,
-      10,
-      18
-    );
+    // 3️⃣ Convert ONCE to UTC
+    const fromUTC = start.toUTC().toISO();
+    const toUTC = end.toUTC().toISO();
 
-    // 4️⃣ Format response
+    // 4️⃣ Get free slots (UTC)
+    const freeSlots = await getFreeSlots(fromUTC, toUTC, slotMinutes);
+
+    // 5️⃣ Convert slots to USER timezone for response
+    const viewerTZ = userTimezone || BUSINESS_TZ;
+
     const slots = freeSlots.map((slot) => ({
-      start: new Date(slot.start).toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: timezone,
-      }),
-      end: new Date(slot.end).toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: timezone,
-      }),
+      start: DateTime.fromISO(slot.start)
+        .setZone(viewerTZ)
+        .toFormat("yyyy-MM-dd HH:mm"),
+      end: DateTime.fromISO(slot.end)
+        .setZone(viewerTZ)
+        .toFormat("yyyy-MM-dd HH:mm"),
     }));
 
-    return res.status(200).json({
+    return res.json({
       success: true,
       date,
-      timezone,
+      businessTimezone: BUSINESS_TZ,
+      userTimezone: viewerTZ,
       slots,
     });
   } catch (error) {
-    console.error("Get slots by date error:", {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data,
-    });
-
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: error.message,

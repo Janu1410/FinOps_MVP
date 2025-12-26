@@ -1,26 +1,36 @@
 import { calendar, calendarId } from "../config/calender.config.js";
 import { createZoomMeeting } from "./zoomMeeting.js";
+import { DateTime } from "luxon";
 
+
+import { toZonedTime } from "date-fns-tz";
+
+const BUSINESS_TZ = "Asia/Kolkata"; // Company timezone
 
 export async function scheduleEvent(
   summary,
   description,
-  preferredDateTime,
+  utcDateTime,
   timezone,
   durationMinutes = 60
 ) {
   try {
-    const startDateTime = new Date(preferredDateTime);
-    const endDateTime = new Date(
-      startDateTime.getTime() + durationMinutes * 60000
+    // ✅ Convert UTC → business timezone
+    const startLocal = toZonedTime(
+      new Date(utcDateTime),
+      BUSINESS_TZ
     );
 
-    // 1️⃣ Check free/busy
+    const endLocal = new Date(
+      startLocal.getTime() + durationMinutes * 60000
+    );
+
+    // Free/busy check
     const freeBusyResponse = await calendar.freebusy.query({
       requestBody: {
-        timeMin: startDateTime.toISOString(),
-        timeMax: endDateTime.toISOString(),
-        timeZone: timezone,
+        timeMin: startLocal.toISOString(),
+        timeMax: endLocal.toISOString(),
+        timeZone: BUSINESS_TZ,
         items: [{ id: calendarId }],
       },
     });
@@ -28,30 +38,31 @@ export async function scheduleEvent(
     const calendarData = freeBusyResponse.data.calendars?.[calendarId];
 
     if (!calendarData) {
-      return {
-        success: false,
-        message: `Calendar ${calendarId} not found or inaccessible`,
-      };
+      return { success: false, message: "Calendar not accessible" };
     }
 
     if ((calendarData.busy || []).length > 0) {
       return { success: false, message: "Preferred slot is busy" };
     }
 
-    // 2️⃣ Create Zoom meeting
     const zoomLink = await createZoomMeeting(
       summary,
-      startDateTime.toISOString().replace(".000", ""),
+      startLocal.toISOString(),
       durationMinutes
     );
 
-    // 3️⃣ Create Google Calendar event
     const event = {
       summary,
-      description: `${description}\n\nJoin Zoom: ${zoomLink}`,
+      description: `${description}\n\nZoom: ${zoomLink}`,
       location: zoomLink,
-      start: { dateTime: startDateTime.toISOString(), timeZone: timezone },
-      end: { dateTime: endDateTime.toISOString(), timeZone: timezone },
+      start: {
+        dateTime: startLocal.toISOString(),
+        timeZone: timezone,
+      },
+      end: {
+        dateTime: endLocal.toISOString(),
+        timeZone: timezone,
+      },
     };
 
     const response = await calendar.events.insert({
@@ -65,25 +76,25 @@ export async function scheduleEvent(
       event: response.data,
     };
   } catch (error) {
-    console.error("Error scheduling meeting:", error);
+    console.error("Schedule error:", error);
     return { success: false, message: error.message };
   }
 }
 
+
+
+
 export async function getFreeSlots(
-  fromISO,
-  toISO,
-  timezone,
-  slotMinutes = 60,
-  workStartHour = 10,
-  workEndHour = 18
+  fromUTC,
+  toUTC,
+  slotMinutes = 60
 ) {
-  // 1️⃣ Fetch busy slots
+  // 1️⃣ FreeBusy query — UTC ONLY
   const fb = await calendar.freebusy.query({
     requestBody: {
-      timeMin: fromISO,
-      timeMax: toISO,
-      timeZone: timezone,
+      timeMin: fromUTC,
+      timeMax: toUTC,
+      timeZone: "UTC",
       items: [{ id: calendarId }],
     },
   });
@@ -91,57 +102,25 @@ export async function getFreeSlots(
   const busy = fb.data.calendars?.[calendarId]?.busy || [];
   const freeSlots = [];
 
-  let current = new Date(fromISO);
-  const endRange = new Date(toISO);
+  let current = DateTime.fromISO(fromUTC, { zone: "utc" });
+  const end = DateTime.fromISO(toUTC, { zone: "utc" });
 
-  while (current < endRange) {
-    const day = current.getDay(); // local day
-    const hour = current.getHours();
+  while (current.plus({ minutes: slotMinutes }) <= end) {
+    const slotStart = current;
+    const slotEnd = slotStart.plus({ minutes: slotMinutes });
 
-    // Skip weekends
-    if (day === 0 || day === 6) {
-      current.setDate(current.getDate() + 1);
-      current.setHours(workStartHour, 0, 0, 0);
-      continue;
-    }
-
-    // Enforce working hours
-    if (hour < workStartHour) {
-      current.setHours(workStartHour, 0, 0, 0);
-    }
-
-    if (hour >= workEndHour) {
-      current.setDate(current.getDate() + 1);
-      current.setHours(workStartHour, 0, 0, 0);
-      continue;
-    }
-
-    const slotStart = new Date(current);
-    const slotEnd = new Date(
-      slotStart.getTime() + slotMinutes * 60000
-    );
-
-    // Slot spills past working hours
-    if (slotEnd.getHours() > workEndHour) {
-      current.setDate(current.getDate() + 1);
-      current.setHours(workStartHour, 0, 0, 0);
-      continue;
-    }
-
-    // Check overlap
     const isBusy = busy.some(b =>
-      new Date(b.start) < slotEnd &&
-      new Date(b.end) > slotStart
+      DateTime.fromISO(b.start) < slotEnd &&
+      DateTime.fromISO(b.end) > slotStart
     );
 
     if (!isBusy) {
       freeSlots.push({
-        start: slotStart.toISOString(),
-        end: slotEnd.toISOString(),
+        start: slotStart.toISO(),
+        end: slotEnd.toISO(),
       });
     }
 
-    // Move to next slot
     current = slotEnd;
   }
 
