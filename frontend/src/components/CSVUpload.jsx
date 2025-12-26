@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Upload, CheckCircle2, Loader2, ArrowRight, FileText, AlertCircle } from 'lucide-react';
@@ -13,7 +13,17 @@ const CSVUpload = () => {
 
   // --- THE UPLOAD LOGIC ---
   const handleFileUpload = async (file) => {
-    if (!file) return;
+  
+    if (!file.name.endsWith('.csv')) {
+  setErrorMessage('Only CSV files are allowed');
+  return;
+}
+
+if (file.size > 10 * 1024 * 1024) {
+  setErrorMessage('File exceeds 50MB limit');
+  return;
+}
+
 
     // 1. Show File Details UI
     setFileDetails({
@@ -23,6 +33,7 @@ const CSVUpload = () => {
     setUploadStatus('processing');
     setErrorMessage('');
 
+    //~~~~need to changes here~~~~~~
     const formData = new FormData();
     formData.append('file', file);
 
